@@ -1,21 +1,18 @@
 package com.example.lab1;
 
-import androidx.annotation.ColorLong;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.EditText;
 
-import java.util.ArrayList;
-import java.util.Stack;
+import org.mariuszgromada.math.mxparser.Expression;
 
 public class MainActivity extends AppCompatActivity
 {
-	private TextView txt;
+	private EditText txt;
 	private String buffer = "";
 	private Double memoryValue = 0d;
-	private boolean isExistsMemory = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -23,9 +20,8 @@ public class MainActivity extends AppCompatActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		txt = findViewById(R.id.result);
+		txt.setInputType(0x00000000);
 	}
-
-
 
 	public void clickFunction(View view) {
 		String chr = ((Button) view).getText().toString();
@@ -34,160 +30,68 @@ public class MainActivity extends AppCompatActivity
 		{
 			case "MC":
 				memoryValue = 0d;
-				isExistsMemory = false;
 				break;
 			case "M+":
-				memoryValue += Double.parseDouble(0+buffer);
-				isExistsMemory = true;
+				if (buffer.length() != 0)
+					memoryValue += Double.parseDouble(buffer);
 				break;
 			case "M-":
-				memoryValue -= Double.parseDouble(0+buffer);
-				isExistsMemory = true;
+				if (buffer.length() != 0)
+					memoryValue -= Double.parseDouble(buffer);
 				break;
 			case "MR":
-				if (isExistsMemory)
-					buffer = "" + memoryValue;
+				buffer = ""+ memoryValue;
+				txt.setText(buffer);
+				txt.setSelection(txt.length());
 				break;
 			case "C":
 				buffer = "";
+				txt.setText(buffer);
+				txt.setSelection(txt.length());
 				break;
-			case "CLR":
-				if (buffer.length() > 1) buffer = buffer.substring(0, buffer.length() - 1);
-				else buffer = "";
-				break;
-			case "SIN":
-				buffer += "s";
-				break;
-			case "COS":
-				buffer += "c";
+			case "R":
+				int a = txt.getSelectionStart();
+				if (a == 0)
+				{
+					txt.setSelection(txt.length());
+					break;
+				}
+				buffer = buffer.substring(0, a-1) + buffer.substring(a);
+				txt.setText(buffer);
+				txt.setSelection(a-1);
 				break;
 			case "=":
-				buffer = result(buffer);
+				String s = result();
+				buffer = (s.equals("NaN")?"ОШИБКА":s);
+				txt.setText(buffer);
+				txt.setSelection(txt.length());
+				break;
+			case "SIN":
+				addText("sin(");
+				break;
+			case "COS":
+				addText("cos(");
 				break;
 			default:
-				buffer += chr;
+				addText(chr);
 				break;
 		}
+	}
 
+	void addText(String forInput)
+	{
+		buffer = buffer.substring(0, txt.getSelectionStart()) + forInput + buffer.substring(txt.getSelectionEnd());
+		int i = txt.getSelectionStart();
 		txt.setText(buffer);
+		txt.setSelection(i+forInput.length());
 	}
 
-	String result(String buffer)
+	String result()
 	{
-		int brackets = 0;
-		boolean isWasSign = true;
-		boolean isWasDot = false;
-		boolean isNegative = false;
-		int diff = 0;
-
-		for (int i = 0; i < buffer.length(); i++)
-		{
-			if (buffer.charAt(i) == '(')
-			{
-				brackets++;
-				if (i > 0)
-					if (buffer.charAt(i-1) != '+' && buffer.charAt(i-1) != '-' && buffer.charAt(i-1) != '*'
-							&& buffer.charAt(i-1) != '/' && buffer.charAt(i-1) != '(' && buffer.charAt(i-1) != 's' && buffer.charAt(i-1) != '(')
-						return "MISS";
-			}
-			else if (buffer.charAt(i) == ')')
-			{
-				brackets--;
-				if (i < buffer.length()-1)
-				{
-					if (buffer.charAt(i+1) != '+' && buffer.charAt(i+1) != '-' && buffer.charAt(i+1) != '*'
-							&& buffer.charAt(i+1) != '/' && buffer.charAt(i+1) != ')')
-						return "MISS";
-				}
-				if (isWasSign) return "MISS";
-			}
-			else if (buffer.charAt(i) > 47 && buffer.charAt(i) < 58)
-			{
-				if (isWasSign) diff++;
-				isWasSign = false;
-			}
-			else if (buffer.charAt(i) == 's' || buffer.charAt(i) == 'c')
-			{
-				if (!isWasSign && i != 0) return "MISS";
-			}
-			else if (buffer.charAt(i) == '.')
-			{
-				if (isWasDot) return "MISS";
-				isWasDot = true;
-			}
-			else if (buffer.charAt(i) == '*' || buffer.charAt(i) == '/' || buffer.charAt(i) == '+' || buffer.charAt(i) == '-')
-			{
-				if (buffer.charAt(i) == '-')
-				{
-					if (!isWasSign)
-					{
-						isWasSign = true;
-						diff--;
-
-					}
-					else if (!isNegative) isNegative = true;
-					else return "MISS";
-				}
-				else if (isWasSign) return "MISS";
-				else
-				{
-					isWasSign = true;
-					diff--;
-				}
-				isWasDot = false;
-			}
-		}
-
-		if (brackets != 0 || diff != 1)
-			return "MISS";
-
-		return calculate(buffer);
-	}
-
-	String calculate(String buffer)
-	{
-		Stack<myCls> stack = new Stack<>();
-		Stack<myCls> result = new Stack<>();
-
-		boolean isWasSign = true;
-
-		for (int i = 0, left = -1; i < buffer.length(); i++)
-		{
-			if (buffer.charAt(i) > 47 && buffer.charAt(i) < 58 || buffer.charAt(i) == '.')
-			{
-				if (isWasSign) left = i;
-				isWasSign = false;
-			}
-			else if (buffer.charAt(i) == '*' || buffer.charAt(i) == '/' || buffer.charAt(i) == '+' || buffer.charAt(i) == '-')
-			{
-				if (isWasSign) left = i;
-				else {
-					result.push(new myCls(Double.parseDouble(buffer.substring(left, i))));
-				}
-				isWasSign = true;
-			}
-			else if (buffer.charAt(i) == '(')
-			{
-				stack.push(new myCls('('));
-			}
-			else if (buffer.charAt(i) == ')')
-			{
-				while (stack.peek().sign != '(')
-				{
-
-				}
-				stack.pop();
-			}
-			else if (buffer.charAt(i) == 's')
-			{
-
-			}
-			else if (buffer.charAt(i) == 'c')
-			{
-
-			}
-		}
-
-		return "TRUE";
+		Expression e = new Expression(buffer);
+		double dbl = e.calculate();
+		if (Math.round(dbl) == dbl)
+			return "" + Math.round(dbl);
+		return Double.toString(dbl);
 	}
 }
