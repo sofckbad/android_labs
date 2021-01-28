@@ -1,0 +1,19 @@
+<resources>
+    <style name="btn" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="backgroundTint">@color/align</item>
+        <item name="elevation">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="iconPadding">0dp</item>
+        <item name="cornerRadius">0dp</item>
+        <item name="android:scaleX">1</item>
+        <item name="android:onClick">clickFunction</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+</resources>
