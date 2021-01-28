@@ -1,5 +1,6 @@
 package com.example.lab1;
 
+import androidx.annotation.ColorLong;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -77,32 +78,75 @@ public class MainActivity extends AppCompatActivity
 		int brackets = 0;
 		boolean isWasSign = true;
 		boolean isWasDot = false;
+		boolean isNegative = false;
+		int diff = 0;
 
-		for (int i = 0; i < buffer.length(); i++)
+		for (int i = 0, left = -1; i < buffer.length(); i++)
 		{
 			if (buffer.charAt(i) == '(')
 			{
 				brackets++;
 				if (i > 0)
 					if (buffer.charAt(i-1) != '+' && buffer.charAt(i-1) != '-' && buffer.charAt(i-1) != '*'
-							&& buffer.charAt(i-1) != '/' && buffer.charAt(i-1) != '(')
+							&& buffer.charAt(i-1) != '/' && buffer.charAt(i-1) != '(' && buffer.charAt(i-1) != 's' && buffer.charAt(i-1) != '(')
 						return "MISS";
 			}
 			else if (buffer.charAt(i) == ')')
 			{
 				brackets--;
 				if (i < buffer.length()-1)
+				{
 					if (buffer.charAt(i+1) != '+' && buffer.charAt(i+1) != '-' && buffer.charAt(i+1) != '*'
 							&& buffer.charAt(i+1) != '/' && buffer.charAt(i+1) != ')')
 						return "MISS";
-
+				}
+				if (isWasSign) return "MISS";
 			}
-//			else if (buffer.charAt(i) > 47 && buffer.charAt(i) < 58)
+			else if (buffer.charAt(i) > 47 && buffer.charAt(i) < 58)
+			{
+				if (isWasSign) diff++;
+				isWasSign = false;
+			}
+			else if (buffer.charAt(i) == 's' || buffer.charAt(i) == 'c')
+			{
+				if (!isWasSign && i != 0) return "MISS";
+			}
+			else if (buffer.charAt(i) == '.')
+			{
+				if (isWasDot) return "MISS";
+				isWasDot = true;
+			}
+			else if (buffer.charAt(i) == '*' || buffer.charAt(i) == '/' || buffer.charAt(i) == '+' || buffer.charAt(i) == '-')
+			{
+				if (buffer.charAt(i) == '-')
+				{
+					if (!isWasSign)
+					{
+						isWasSign = true;
+						diff--;
+
+					}
+					else if (!isNegative) isNegative = true;
+					else return "MISS";
+				}
+				else if (isWasSign) return "MISS";
+				else
+				{
+					isWasSign = true;
+					diff--;
+				}
+				isWasDot = false;
+			}
 		}
 
-		if (brackets != 0)
+		if (brackets != 0 || diff != 1)
 			return "MISS";
 
+		return calculate(buffer);
+	}
+
+	String calculate(String buffer)
+	{
 		return "";
 	}
 }
