@@ -14,7 +14,6 @@ public class MainActivity extends AppCompatActivity
 {
 	private TextView txt;
 	private String buffer = "";
-	ArrayList<myCls> arr = new ArrayList<>();
 	private Double memoryValue = 0d;
 	private boolean isExistsMemory = false;
 
@@ -81,7 +80,7 @@ public class MainActivity extends AppCompatActivity
 		boolean isNegative = false;
 		int diff = 0;
 
-		for (int i = 0, left = -1; i < buffer.length(); i++)
+		for (int i = 0; i < buffer.length(); i++)
 		{
 			if (buffer.charAt(i) == '(')
 			{
@@ -147,6 +146,48 @@ public class MainActivity extends AppCompatActivity
 
 	String calculate(String buffer)
 	{
-		return "";
+		Stack<myCls> stack = new Stack<>();
+		Stack<myCls> result = new Stack<>();
+
+		boolean isWasSign = true;
+
+		for (int i = 0, left = -1; i < buffer.length(); i++)
+		{
+			if (buffer.charAt(i) > 47 && buffer.charAt(i) < 58 || buffer.charAt(i) == '.')
+			{
+				if (isWasSign) left = i;
+				isWasSign = false;
+			}
+			else if (buffer.charAt(i) == '*' || buffer.charAt(i) == '/' || buffer.charAt(i) == '+' || buffer.charAt(i) == '-')
+			{
+				if (isWasSign) left = i;
+				else {
+					result.push(new myCls(Double.parseDouble(buffer.substring(left, i))));
+				}
+				isWasSign = true;
+			}
+			else if (buffer.charAt(i) == '(')
+			{
+				stack.push(new myCls('('));
+			}
+			else if (buffer.charAt(i) == ')')
+			{
+				while (stack.peek().sign != '(')
+				{
+
+				}
+				stack.pop();
+			}
+			else if (buffer.charAt(i) == 's')
+			{
+
+			}
+			else if (buffer.charAt(i) == 'c')
+			{
+
+			}
+		}
+
+		return "TRUE";
 	}
 }
