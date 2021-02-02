@@ -19,26 +19,26 @@
         <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/editText1"
+                android:id="@+id/login_email"
                 android:singleLine="true"
-                android:selectAllOnFocus="false"
                 android:inputType="textEmailAddress"
                 android:hint="e-mail"
                 android:gravity="center_horizontal"
                 android:textColorHint="@color/hint"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:selectAllOnFocus="true" />
 
         <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/editText2"
+                android:id="@+id/login_password"
                 android:inputType="textPassword"
                 android:singleLine="true"
-                android:selectAllOnFocus="false"
                 android:hint="password"
                 android:gravity="center_horizontal"
                 android:textColorHint="@color/hint"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:selectAllOnFocus="true" />
 
         <LinearLayout
                 android:orientation="horizontal"
@@ -50,7 +50,7 @@
                     android:text="SIGN IN"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/button1"
+                    android:id="@+id/login_sign_in"
                     android:layout_weight="1"
                     android:onClick="onClick" />
 
@@ -59,10 +59,23 @@
                     android:text="SIGN UP"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/button2"
+                    android:id="@+id/login_sign_up"
                     android:layout_weight="1"
-                    android:onClick="onClickUp" />
+                    android:onClick="onClickUpLogin" />
 
         </LinearLayout>
+
+        <TextView
+                android:id="@+id/login_alert"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+                android:textColor="@color/red_alert"
+                android:textAllCaps="true"
+                android:textSize="24sp"
+                android:fontFamily="sans-serif-medium"
+                android:text="text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                tools:visibility="invisible" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

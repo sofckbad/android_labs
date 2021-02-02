@@ -12,7 +12,7 @@ public class DBHelper extends SQLiteOpenHelper
 
 	public static final String COLUMN_ID = "_id";
 	public static final String COLUMN_NAME = "login";
-	public static final String COLUMN_YEAR = "password";
+	public static final String COLUMN_PASSWORD = "password";
 
 	public DBHelper(Context context) {
 		super(context, DATABASE_NAME, null, SCHEMA);
@@ -21,12 +21,12 @@ public class DBHelper extends SQLiteOpenHelper
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 
-		db.execSQL("CREATE TABLE users (" + COLUMN_ID
+		db.execSQL("CREATE TABLE IF NOT EXISTS users (" + COLUMN_ID
 				+ " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_NAME
-				+ " TEXT, " + COLUMN_YEAR + " TEXT);");
-		// добавление начальных данных
+				+ " TEXT unique, " + COLUMN_PASSWORD + " TEXT);");
+
 		db.execSQL("INSERT INTO "+ TABLE +" (" + COLUMN_NAME
-				+ ", " + COLUMN_YEAR  + ") VALUES ('admin', 'admin');");
+				+ ", " + COLUMN_PASSWORD + ") VALUES ('admin', 'admin');");
 	}
 
 	@Override
