@@ -22,11 +22,12 @@
                 android:id="@+id/register_email"
                 android:singleLine="true"
                 android:inputType="textEmailAddress"
-                android:hint="e-mail"
+                android:hint="@string/email"
                 android:gravity="center_horizontal"
                 android:textColorHint="@color/hint"
                 android:textColor="@color/white"
-                android:selectAllOnFocus="true" />
+                android:selectAllOnFocus="true"
+                android:autofillHints=".AUTOFILL_HINT_EMAIL_ADDRESS" />
 
         <EditText
                 android:layout_width="match_parent"
@@ -34,11 +35,12 @@
                 android:id="@+id/register_password"
                 android:inputType="textPassword"
                 android:singleLine="true"
-                android:hint="password"
+                android:hint="@string/password"
                 android:gravity="center_horizontal"
                 android:textColorHint="@color/hint"
                 android:textColor="@color/white"
-                android:selectAllOnFocus="true" />
+                android:selectAllOnFocus="true"
+                android:autofillHints=".AUTOFILL_HINT_NEW_PASSWORD" />
 
         <EditText
                 android:layout_width="match_parent"
@@ -46,11 +48,12 @@
                 android:id="@+id/register_confirm_password"
                 android:inputType="textPassword"
                 android:singleLine="true"
-                android:hint="confirm password"
+                android:hint="@string/confirm_password"
                 android:gravity="center_horizontal"
                 android:textColorHint="@color/hint"
                 android:textColor="@color/white"
-                android:selectAllOnFocus="true" />
+                android:selectAllOnFocus="true"
+                android:autofillHints=".AUTOFILL_HINT_NEW_PASSWORD"  />
 
         <LinearLayout
                 android:orientation="horizontal"
@@ -59,7 +62,7 @@
 
             <Button
                     style="@style/btn"
-                    android:text="GO BACK"
+                    android:text="@string/go_back"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/register_sign_in"
@@ -68,7 +71,7 @@
 
             <Button
                     style="@style/btn"
-                    android:text="SIGN UP"
+                    android:text="@string/sign_up"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/register_sign_up"
@@ -83,7 +86,6 @@
                 android:textAllCaps="true"
                 android:textSize="24sp"
                 android:fontFamily="sans-serif-medium"
-                android:text="text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"

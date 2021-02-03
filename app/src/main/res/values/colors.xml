@@ -12,4 +12,5 @@
     <color name="txt_bg">#FF2B92FF</color>
     <color name="hint">#A8FFFFFF</color>
     <color name="red_alert">#EF1485</color>
+    <color name="foreground">#EF1485</color>
 </resources>

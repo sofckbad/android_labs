@@ -8,15 +8,13 @@ import android.widget.EditText;
 
 import org.mariuszgromada.math.mxparser.Expression;
 
-public class MainActivity extends AppCompatActivity
-{
+public class MainActivity extends AppCompatActivity {
 	private EditText txt;
 	private String buffer = "";
 	private Double memoryValue = 0d;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		txt = findViewById(R.id.result);
@@ -26,18 +24,21 @@ public class MainActivity extends AppCompatActivity
 	public void clickFunction(View view) {
 		String chr = ((Button) view).getText().toString();
 
-		switch (chr)
-		{
+		switch (chr) {
 			case "MC":
 				memoryValue = 0d;
 				break;
 			case "M+":
-				if (buffer.length() != 0)
-					memoryValue += Double.parseDouble(buffer);
+				try {
+					if (buffer.length() != 0)
+						memoryValue += Double.parseDouble(buffer);
+				} catch (NumberFormatException ignored) { }
 				break;
 			case "M-":
-				if (buffer.length() != 0)
-					memoryValue -= Double.parseDouble(buffer);
+				try {
+					if (buffer.length() != 0)
+						memoryValue -= Double.parseDouble(buffer);
+				} catch (NumberFormatException ignored) { }
 				break;
 			case "MR":
 				buffer = ""+ memoryValue;
@@ -78,16 +79,14 @@ public class MainActivity extends AppCompatActivity
 		}
 	}
 
-	void addText(String forInput)
-	{
+	void addText(String forInput) {
 		buffer = buffer.substring(0, txt.getSelectionStart()) + forInput + buffer.substring(txt.getSelectionEnd());
 		int i = txt.getSelectionStart();
 		txt.setText(buffer);
 		txt.setSelection(i+forInput.length());
 	}
 
-	String result()
-	{
+	String result() {
 		Expression e = new Expression(buffer);
 		double dbl = e.calculate();
 		if (Math.round(dbl) == dbl)

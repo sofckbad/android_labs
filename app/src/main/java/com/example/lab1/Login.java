@@ -1,5 +1,6 @@
 package com.example.lab1;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -10,36 +11,64 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class Login extends AppCompatActivity
-{
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.vk.api.sdk.VK;
+import com.vk.api.sdk.auth.VKAccessToken;
+import com.vk.api.sdk.auth.VKAuthCallback;
+import com.vk.api.sdk.auth.VKScope;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+
+public class Login extends AppCompatActivity {
+	private static final int RC_GOOGLE_IN = 0;
+	private static final int RC_VK_IN = 282;
 	SQLiteDatabase db;
 	Cursor userCursor;
 	TextView alert;
+	GoogleSignInClient mGoogleSignInClient;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 
-		db = (new DBHelper(getApplicationContext())).getReadableDatabase();
 		alert = findViewById(R.id.login_alert);
 		alert.setVisibility(View.INVISIBLE);
+		db = (new DBHelper(getApplicationContext())).getReadableDatabase();
+
+		GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+		mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 	}
 
 	@Override
-	public void onDestroy(){
+	public void onDestroy() {
 		super.onDestroy();
-
 		db.close();
-
-		//нужен ли if если курсор null
 		userCursor.close();
 	}
+	public void setAlert(String alert_text) {
+		alert.setText(alert_text);
+		alert.setVisibility(View.VISIBLE);
+	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+		if ((data == null || !VK.onActivityResult(requestCode, resultCode, data,
+				new VKAuthCallback() {
+			@Override public void onLogin(@NotNull VKAccessToken vkAccessToken) { startActivity(new Intent(Login.this, MainActivity.class)); }
+			@Override public void onLoginFailed(int i) { setAlert("didn't pass vk authorization");
+			}}))&&requestCode == RC_VK_IN)
+		{ super.onActivityResult(requestCode, resultCode, data); }
+		else if (requestCode == RC_GOOGLE_IN) {
+			startActivity(new Intent(Login.this, MainActivity.class));
+		}
+	}
 
-	public void onClick(View view)
-	{
+	public void button_sign_in_click(View view) {
 		String email = ((EditText)findViewById(R.id.login_email)).getText().toString();
 		String password = ((EditText)findViewById(R.id.login_password)).getText().toString();
 
@@ -54,14 +83,7 @@ public class Login extends AppCompatActivity
 			else setAlert("no matches");
 		}
 	}
-
-	public void onClickUpLogin(View view)
-	{
-		startActivity(new Intent(Login.this, Register.class));
-	}
-
-	public void setAlert(String alert_text) {
-		alert.setText(alert_text);
-		alert.setVisibility(View.VISIBLE);
-	}
+	public void button_sign_up_click(View view) { startActivity(new Intent(Login.this, Register.class)); }
+	public void vkAuthorise(View view) { VK.login(this, Collections.singleton(VKScope.EMAIL)); }
+	public void googleAuthorise(View view) { startActivityForResult(mGoogleSignInClient.getSignInIntent(), RC_GOOGLE_IN); }
 }

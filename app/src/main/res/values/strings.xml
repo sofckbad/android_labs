@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">app.1</string>
     <string name="main_name">CALC</string>
+    <string name="email">e-mail</string>
+    <string name="password">password</string>
+    <string name="confirm_password">confirm password</string>
+    <string name="go_back">go back</string>
+    <string name="sign_up">sign up</string>
+    <string name="sign_in">sign in</string>
+    <string name="vk">VK</string>
+    <integer name="com_vk_sdk_AppId">7749130</integer>
 </resources>
