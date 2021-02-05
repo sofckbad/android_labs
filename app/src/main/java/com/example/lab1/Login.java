@@ -12,8 +12,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
 import com.vk.api.sdk.VK;
 import com.vk.api.sdk.auth.VKAccessToken;
 import com.vk.api.sdk.auth.VKAuthCallback;
@@ -64,7 +66,10 @@ public class Login extends AppCompatActivity {
 			}}))&&requestCode == RC_VK_IN)
 		{ super.onActivityResult(requestCode, resultCode, data); }
 		else if (requestCode == RC_GOOGLE_IN) {
-			startActivity(new Intent(Login.this, MainActivity.class));
+			try {
+				GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException.class);
+				startActivity(new Intent(Login.this, MainActivity.class));
+			} catch (ApiException e) { setAlert("didn't pass google authorization"); }
 		}
 	}
 
