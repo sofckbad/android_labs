@@ -4,40 +4,49 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".Login"
+        tools:context=".Register"
         android:background="#333333">
 
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:id="@+id/linearLayout">
+            app:layout_constraintTop_toTopOf="parent">
 
         <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/login_email"
+                android:id="@+id/register_email"
                 android:singleLine="true"
                 android:inputType="textEmailAddress"
                 android:hint="@string/email"
                 android:gravity="center_horizontal"
                 android:textColorHint="@color/hint"
                 android:textColor="@color/white"
-                android:selectAllOnFocus="true"
-                android:autofillHints=".AUTOFILL_HINT_EMAIL_ADDRESS" />
+                android:selectAllOnFocus="true" />
 
         <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/login_password"
+                android:id="@+id/register_password"
                 android:inputType="textPassword"
                 android:singleLine="true"
-                android:autofillHints=".AUTOFILL_HINT_PASSWORD"
                 android:hint="@string/password"
+                android:gravity="center_horizontal"
+                android:textColorHint="@color/hint"
+                android:textColor="@color/white"
+                android:selectAllOnFocus="true" />
+
+        <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/register_confirm_password"
+                android:inputType="textPassword"
+                android:singleLine="true"
+                android:hint="@string/confirm_password"
                 android:gravity="center_horizontal"
                 android:textColorHint="@color/hint"
                 android:textColor="@color/white"
@@ -50,66 +59,37 @@
 
             <Button
                     style="@style/btn"
-                    android:text="@string/sign_in"
+                    android:text="@string/go_back"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/login_sign_in"
+                    android:id="@+id/register_go_back"
                     android:layout_weight="1"
-                    android:onClick="button_sign_in_click" />
+                    android:onClick="register_go_back_click"
+                    tools:ignore="OnClick" />
 
             <Button
                     style="@style/btn"
                     android:text="@string/sign_up"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/login_sign_up"
+                    android:id="@+id/register_sign_up"
                     android:layout_weight="1"
-                    android:onClick="button_sign_up_click" />
-
+                    android:onClick="register_sign_up_click"
+                    tools:ignore="OnClick" />
         </LinearLayout>
 
         <TextView
-                android:id="@+id/login_alert"
+                android:id="@+id/register_alert"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display2"
                 android:textColor="@color/red_alert"
                 android:textAllCaps="true"
                 android:textSize="24sp"
                 android:fontFamily="sans-serif-medium"
-                android:text=""
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 tools:visibility="invisible" />
 
     </LinearLayout>
-
-    <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/button"
-            android:layout_weight="1"
-            style="@style/btn"
-            android:onClick="vkAuthorise"
-            app:icon="@drawable/vk"
-            app:iconTintMode="multiply"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginBottom="16dp" />
-
-    <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/google_button"
-            style="@style/btn"
-            android:onClick="googleAuthorise"
-            app:icon="@drawable/google_icon"
-            app:iconTintMode="multiply"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="16dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

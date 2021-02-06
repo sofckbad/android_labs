@@ -13,4 +13,6 @@
     <color name="hint">#A8FFFFFF</color>
     <color name="red_alert">#EF1485</color>
     <color name="foreground">#EF1485</color>
+    <color name="transparent">#00000000</color>
+    <color name="pink">#FFE91E63</color>
 </resources>

@@ -1,27 +1,34 @@
 package com.example.lab1;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
 import org.mariuszgromada.math.mxparser.Expression;
 
-public class MainActivity extends AppCompatActivity {
+public class Calculator extends Fragment {
 	private EditText txt;
 	private String buffer = "";
 	private Double memoryValue = 0d;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-		txt = findViewById(R.id.result);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.fragment_calculator, container, false);
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		txt = getActivity().findViewById(R.id.result);
 		txt.setInputType(0x00000000);
 	}
 
-	public void clickFunction(View view) {
+	public void calculator_buttons(View view) {
 		String chr = ((Button) view).getText().toString();
 
 		switch (chr) {
@@ -41,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
 				} catch (NumberFormatException ignored) { }
 				break;
 			case "MR":
-				buffer = ""+ memoryValue;
+				long l = Math.round(memoryValue);
+				buffer = (memoryValue == l)? ""+l:memoryValue.toString();
 				txt.setText(buffer);
 				txt.setSelection(txt.length());
 				break;

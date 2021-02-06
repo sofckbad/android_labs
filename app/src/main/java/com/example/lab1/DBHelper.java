@@ -8,11 +8,16 @@ public class DBHelper extends SQLiteOpenHelper
 {
 	private static final String DATABASE_NAME = "users.db";
 	private static final int SCHEMA = 1;
-	static final String TABLE = "users";
+	static final String USERS = "users";
+	static final String TABLE = "data";
 
 	public static final String COLUMN_ID = "_id";
+
 	public static final String COLUMN_NAME = "login";
 	public static final String COLUMN_PASSWORD = "password";
+
+	public static final String COLUMN_IMAGE = "image";
+	public static final String COLUMN_MUSIC = "audio";
 
 	public DBHelper(Context context) {
 		super(context, DATABASE_NAME, null, SCHEMA);
@@ -21,17 +26,21 @@ public class DBHelper extends SQLiteOpenHelper
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 
-		db.execSQL("CREATE TABLE IF NOT EXISTS users (" + COLUMN_ID
+		db.execSQL("CREATE TABLE IF NOT EXISTS " + USERS + " (" + COLUMN_ID
 				+ " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_NAME
 				+ " TEXT unique, " + COLUMN_PASSWORD + " TEXT);");
 
-		db.execSQL("INSERT INTO "+ TABLE +" (" + COLUMN_NAME
+		db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE + " (" + COLUMN_ID
+				+ " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_IMAGE
+				+ " TEXT, " + COLUMN_MUSIC + " TEXT);");
+
+		db.execSQL("INSERT INTO "+ USERS +" (" + COLUMN_NAME
 				+ ", " + COLUMN_PASSWORD + ") VALUES ('admin', 'admin');");
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion,  int newVersion) {
-		db.execSQL("DROP TABLE IF EXISTS "+TABLE);
+		db.execSQL("DROP TABLE IF EXISTS "+ USERS);
 		onCreate(db);
 	}
 }
