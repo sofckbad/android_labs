@@ -7,7 +7,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.Manifest;
-import android.content.ContentUris;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -17,6 +16,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -64,7 +64,7 @@ public class Main extends AppCompatActivity {
 		setContentView(R.layout.activity);
 		GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
 		mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-		getSupportFragmentManager().beginTransaction().add(R.id.main_content, login).commit();
+		getSupportFragmentManager().beginTransaction().add(R.id.main_content, contentScroller).commit();
 
 		if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 			ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, 1);
@@ -75,30 +75,41 @@ public class Main extends AppCompatActivity {
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-		if ((data == null || ! VK.onActivityResult(requestCode, resultCode, data, new VKAuthCallback() {
-			@Override
-			public void onLogin(@NotNull VKAccessToken vkAccessToken) { switchFragment(R.id.main_content, calculator); }
+		switch (requestCode){
+			case VK_REQUEST:
+				VK.onActivityResult(requestCode, resultCode, data, new VKAuthCallback() {
+					@Override
+					public void onLogin(@NotNull VKAccessToken vkAccessToken) { switchFragment(R.id.main_content, calculator); }
 
-			@Override
-			public void onLoginFailed(int i) { Toast.makeText(Main.this, "didn't pass vk authorization", Toast.LENGTH_LONG).show(); }
-		})) && requestCode == VK_REQUEST) {
-			super.onActivityResult(requestCode, resultCode, data);
-		} else if (requestCode == GOOGLE_REQUEST) {
-			try {
-				GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException.class);
-				switchFragment(R.id.main_content, contentScroller);
-			}
-			catch (ApiException e) {
-				Toast.makeText(Main.this, "didn't pass google authorization", Toast.LENGTH_LONG).show();
-			}
-		} else if (requestCode == IMAGE_REQUEST && resultCode == RESULT_OK) {
-			((ImageButton) findViewById(R.id.addImage)).setImageURI(data.getData());
-			image = data.getData().toString();
+					@Override
+					public void onLoginFailed(int i) { Toast.makeText(Main.this, "didn't pass vk authorization", Toast.LENGTH_LONG).show();}});
+				break;
+			case GOOGLE_REQUEST:
+				try {
+					GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException.class);
+					switchFragment(R.id.main_content, contentScroller);
+				} catch (ApiException e) {
+					Toast.makeText(Main.this, "didn't pass google authorization", Toast.LENGTH_LONG).show();
+				}
+				break;
+			case IMAGE_REQUEST:
+				if (resultCode == RESULT_OK){
+					((ImageButton) findViewById(R.id.addImage)).setImageURI(data.getData());
+					image = data.getData().toString();
+				}
+				break;
+			case AUDIO_REQUEST:
+				if (resultCode == RESULT_OK) {
+					((Button) findViewById(R.id.addMusic)).setText(data.getData().toString().split(".+document/")[1]);
+					audio = data.getData().toString();
+				}
+				break;
+			case 5:
+				if (resultCode == RESULT_OK) {
+					switchFragment(R.id.main_content, calculator);
+				}
 		}
-		if (requestCode == AUDIO_REQUEST && resultCode == RESULT_OK) {
-			((Button) findViewById(R.id.addMusic)).setText(data.getData().toString().split(".+document/")[1]);
-			audio = data.getData().toString();
-		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	public void switchFragment(int id, Fragment fragment) {
@@ -113,7 +124,6 @@ public class Main extends AppCompatActivity {
 		String email = ((EditText) this.findViewById(R.id.register_email)).getText().toString();
 		String password = ((EditText) this.findViewById(R.id.register_password)).getText().toString();
 		String confirm_password = ((EditText) this.findViewById(R.id.register_confirm_password)).getText().toString();
-		SQLiteDatabase db = (new DBHelper(this)).getWritableDatabase();
 
 
 		if (! Pattern.matches("[a-zA-z0-9_-]{3,20}@mail[.]ru", email) && ! Pattern.matches("[a-zA-z0-9_-]{3,20}@gmail[.]com", email)) {
@@ -127,11 +137,13 @@ public class Main extends AppCompatActivity {
 		} else if (! Pattern.matches(".*\\d+.*", password)) {
 			Toast.makeText(this, "add numeral", Toast.LENGTH_LONG).show();
 		} else if (! password.equals(confirm_password)) {
-			Toast.makeText(this, "no matches", Toast.LENGTH_LONG).show();
+			Toast.makeText(this, "check second password", Toast.LENGTH_LONG).show();
 		} else {
-			db.execSQL("INSERT INTO " + DBHelper.USERS + " (" + DBHelper.COLUMN_NAME + ", " + DBHelper.COLUMN_PASSWORD + ") VALUES ('" + email + "', '" + password + "')");
-			db.close();
-			((Main) this).switchFragment(R.id.main_content, calculator);
+			Intent intent = new Intent(this, insertIntoDB.class);
+			intent.putExtra("table", DBHelper.USERS);
+			intent.putExtra("email", email);
+			intent.putExtra("password", password);
+			startActivityForResult(intent, 5);
 		}
 	}
 
@@ -169,19 +181,23 @@ public class Main extends AppCompatActivity {
 		ImageButton b = (ImageButton) getLayoutInflater().inflate(R.layout.button, null);
 		b.setId(((LinearLayout) findViewById(R.id.content)).getChildCount());
 		try {
-			b.setImageURI(Uri.parse(image));
-		} catch (NullPointerException e) {
+//			b.setImageURI(Uri.parse(image));
+			b.setImageBitmap(MediaStore.Images.Media.getBitmap(getContentResolver() ,Uri.parse(image)));
+		} catch (NullPointerException | IOException e) {
 			e.printStackTrace();
 			System.out.println(image);
 		}
-		b.setLayoutParams(new LinearLayout.LayoutParams(300, 300));
+		b.setLayoutParams(new ViewGroup.LayoutParams(
+				Math.round(getResources().getDimension(R.dimen.width)),
+				Math.round(getResources().getDimension(R.dimen.height))));
 		media.add(audio);
 		b.setOnClickListener(view -> {
 			if (mediaNumWhoPlaying != view.getId()) {
 				try {
 					mp.reset();
-					mp.setDataSource(this, ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, Integer.parseInt(media.get(view.getId()).split("%3A")[1])));
+//					mp.setDataSource(this, ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, Integer.parseInt(media.get(view.getId()).split("%3A")[1])));
 //					mp.setDataSource(this, Uri.parse(media.get(view.getId())));
+					mp.setDataSource(this, Uri.parse(media.get(view.getId())));
 					mp.prepare();
 					mp.start();
 					mediaNumWhoPlaying = view.getId();

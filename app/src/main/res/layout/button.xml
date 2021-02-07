@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--<ImageButton style="@style/imgButton"/>-->
-<ImageButton
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+<ImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="@dimen/width"
-        android:layout_height="@dimen/height"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:scaleType="centerCrop"
         android:background="@color/transparent"
         app:iconPadding="0dp"
@@ -16,4 +15,4 @@
         android:padding="0dp"
         android:layout_margin="6dp"
         android:src="@drawable/plus"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
