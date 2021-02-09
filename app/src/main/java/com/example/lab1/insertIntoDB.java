@@ -23,7 +23,6 @@ public class insertIntoDB extends AppCompatActivity {
 			setResult(RESULT_OK);
 		}
 		catch (SQLiteConstraintException e) {
-			Toast.makeText(this, "SQLiteConstraintException", Toast.LENGTH_LONG).show();
 			setResult(RESULT_CANCELED);
 		}
 		finish();

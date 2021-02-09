@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import org.mariuszgromada.math.mxparser.Expression;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Calculator extends Fragment {
@@ -46,19 +47,25 @@ public class Calculator extends Fragment {
 				break;
 			case R.id.m_plus:
 				try {
-					if (buffer.length() != 0)
-						memoryValue += Double.parseDouble(buffer);
+					if (buffer.length() != 0){
+						String s = result();
+						if (!s.equals("NaN"))
+							memoryValue += Integer.parseInt(s);
+					}
 				} catch (NumberFormatException ignored) { }
 				break;
 			case R.id.m_minus:
 				try {
-					if (buffer.length() != 0)
-						memoryValue -= Double.parseDouble(buffer);
+					if (buffer.length() != 0) {
+						String s = result();
+						if (! s.equals("NaN")) memoryValue -= Integer.parseInt(s);
+					}
 				} catch (NumberFormatException ignored) { }
 				break;
 			case R.id.mr:
 				long l = Math.round(memoryValue);
-				buffer = (memoryValue == l)? ""+l:memoryValue.toString();
+				String str = (memoryValue == l)? ""+l:memoryValue.toString();
+				buffer += str;
 				txt.setText(buffer);
 				txt.setSelection(txt.length());
 				break;
@@ -75,6 +82,11 @@ public class Calculator extends Fragment {
 				String s = result();
 				if (!s.equals("NaN"))
 					buffer = s;
+				else {
+					((Main) getActivity()).mainToast.setText("bad expression");
+					if (((Main) getActivity()).mainToast.getView().getWindowVisibility() != View.VISIBLE)
+						((Main) getActivity()).mainToast.show();
+				}
 				txt.setText(buffer);
 				txt.setSelection(txt.length());
 				break;
@@ -82,8 +94,6 @@ public class Calculator extends Fragment {
 				addText(((Button) view).getText().toString());
 				break;
 		}
-		String s = result();
-		((TextView)getActivity().findViewById(R.id.result)).setText((s.equals("NaN")?"":s));
 	}
 
 	void addText(String forInput) {
@@ -117,8 +127,13 @@ public class Calculator extends Fragment {
 		} else if (forInput.equals(".")) {
 			if (Pattern.matches(".*\\d*\\.\\d*$", left) || Pattern.matches("^\\d*\\.\\d*.*", right))
 				return;
+			else if (!Pattern.matches("\\d", left)) {
+				forInput = 0+forInput;
+			}
 		} else if (Pattern.matches("[+*/]", forInput)){
-			if (left.length() == 0) return;
+			if (left.length() == 0)
+				if (forInput.equals("+")) left = 0+forInput+left;
+				else left = 1+forInput+left;
 			else if (left.charAt(left.length()-1)=='(') return;
 			else if (Pattern.matches(".*[*/][-]$", left)
 					&& !Pattern.matches("^[+-/*].*", right)) left = left.substring(0, left.length()-2)+forInput;
@@ -151,6 +166,37 @@ public class Calculator extends Fragment {
 	}
 
 	String result() {
+
+		if (Pattern.matches(".*\\d[sc].*", buffer)) {
+			Matcher matcher = Pattern.compile("\\d[sc]").matcher(buffer);
+			try {
+				while (matcher.find()) {
+					String m = matcher.group();
+					buffer = buffer.replace(m, m.charAt(0) + "*" + m.charAt(1));
+				}
+			} catch (IllegalStateException ignored) { }
+		}
+		if (Pattern.matches(".*\\.\\D.*", buffer)) {
+			Matcher matcher = Pattern.compile("\\.\\D").matcher(buffer);
+			try {
+				while (matcher.find()) {
+					String m = matcher.group();
+					buffer = buffer.replace(m, m.charAt(0)+"0"+m.charAt(1));
+				}
+			}catch (IllegalStateException ignored) { }
+		}
+		if (Pattern.matches(".*\\.$", buffer)) {
+			buffer += 0;
+		}
+
+		int i = 0;
+		for (Byte b: buffer.getBytes()) if (b == '(') i++; else if (b == ')') i--;
+		if (i > 0){
+			String s = "";
+			for (int j = 0; j < i; j++) s += ')';
+			buffer += s;
+		}
+
 		Expression e = new Expression(buffer);
 		double dbl = e.calculate();
 		if (Math.round(dbl) == dbl)
