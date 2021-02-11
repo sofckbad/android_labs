@@ -17,11 +17,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
-import android.telecom.Call;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -75,7 +72,7 @@ public class Main extends AppCompatActivity {
 		setContentView(R.layout.activity);
 		GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
 		mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-		getSupportFragmentManager().beginTransaction().add(R.id.main_content, calculator).commit();
+		getSupportFragmentManager().beginTransaction().add(R.id.main_content, login).commit();
 
 		mainToast = Toast.makeText(this, "", Toast.LENGTH_LONG);
 
@@ -103,7 +100,7 @@ public class Main extends AppCompatActivity {
 			case GOOGLE_REQUEST:
 				try {
 					GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException.class);
-					switchFragment(R.id.main_content, contentScroller);
+					switchFragment(R.id.main_content, calculator);
 				} catch (ApiException e) {
 					mainToast.setText("didn't pass google authorization");
 					if (mainToast.getView().getWindowVisibility() != View.VISIBLE)
@@ -195,7 +192,7 @@ public class Main extends AppCompatActivity {
 			if (mainToast.getView().getWindowVisibility() != View.VISIBLE)
 				mainToast.show();
 		} else {
-			Intent intent = new Intent(this, insertIntoDB.class);
+			Intent intent = new Intent(this, InsertIntoDB.class);
 			intent.putExtra("table", DBHelper.USERS);
 			intent.putExtra("email", email);
 			intent.putExtra("password", password);

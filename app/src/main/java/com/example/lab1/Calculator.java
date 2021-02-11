@@ -166,38 +166,39 @@ public class Calculator extends Fragment {
 	}
 
 	String result() {
+		String buff = buffer;
 
-		if (Pattern.matches(".*\\d[sc].*", buffer)) {
-			Matcher matcher = Pattern.compile("\\d[sc]").matcher(buffer);
+		if (Pattern.matches(".*\\d[sc].*", buff)) {
+			Matcher matcher = Pattern.compile("\\d[sc]").matcher(buff);
 			try {
 				while (matcher.find()) {
 					String m = matcher.group();
-					buffer = buffer.replace(m, m.charAt(0) + "*" + m.charAt(1));
+					buff = buff.replace(m, m.charAt(0) + "*" + m.charAt(1));
 				}
 			} catch (IllegalStateException ignored) { }
 		}
 		if (Pattern.matches(".*\\.\\D.*", buffer)) {
-			Matcher matcher = Pattern.compile("\\.\\D").matcher(buffer);
+			Matcher matcher = Pattern.compile("\\.\\D").matcher(buff);
 			try {
 				while (matcher.find()) {
 					String m = matcher.group();
-					buffer = buffer.replace(m, m.charAt(0)+"0"+m.charAt(1));
+					buff = buff.replace(m, m.charAt(0)+"0"+m.charAt(1));
 				}
 			}catch (IllegalStateException ignored) { }
 		}
-		if (Pattern.matches(".*\\.$", buffer)) {
-			buffer += 0;
+		if (Pattern.matches(".*\\.$", buff)) {
+			buff += 0;
 		}
 
 		int i = 0;
-		for (Byte b: buffer.getBytes()) if (b == '(') i++; else if (b == ')') i--;
+		for (Byte b: buff.getBytes()) if (b == '(') i++; else if (b == ')') i--;
 		if (i > 0){
-			String s = "";
-			for (int j = 0; j < i; j++) s += ')';
-			buffer += s;
+			StringBuilder s = new StringBuilder();
+			for (int j = 0; j < i; j++) s.append(')');
+			buff += s;
 		}
 
-		Expression e = new Expression(buffer);
+		Expression e = new Expression(buff);
 		double dbl = e.calculate();
 		if (Math.round(dbl) == dbl)
 			return "" + Math.round(dbl);

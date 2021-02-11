@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.Toast;
 
-public class insertIntoDB extends AppCompatActivity {
+public class InsertIntoDB extends AppCompatActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
