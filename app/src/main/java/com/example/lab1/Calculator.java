@@ -50,7 +50,7 @@ public class Calculator extends Fragment {
 					if (buffer.length() != 0){
 						String s = result();
 						if (!s.equals("NaN"))
-							memoryValue += Integer.parseInt(s);
+							memoryValue += Double.parseDouble(s);
 					}
 				} catch (NumberFormatException ignored) { }
 				break;
@@ -58,15 +58,14 @@ public class Calculator extends Fragment {
 				try {
 					if (buffer.length() != 0) {
 						String s = result();
-						if (! s.equals("NaN")) memoryValue -= Integer.parseInt(s);
+						if (! s.equals("NaN")) memoryValue -= Double.parseDouble(s);
 					}
 				} catch (NumberFormatException ignored) { }
 				break;
 			case R.id.mr:
 				long l = Math.round(memoryValue);
 				String str = (memoryValue == l)? ""+l:memoryValue.toString();
-				buffer += str;
-				txt.setText(buffer);
+				addText("memory");
 				txt.setSelection(txt.length());
 				break;
 			case R.id.clear:
@@ -124,10 +123,22 @@ public class Calculator extends Fragment {
 			}
 		} else if (Pattern.matches(".*[sinco][(]?$", left) && Pattern.matches("^[io]?[sn]?[(].*", right)) {
 			return;
+		}else if (forInput.equals("memory")) {
+			if (Pattern.matches(".*\\d$", left) || Pattern.matches("^\\d.*", right)) {
+				long l = Math.round(memoryValue);
+				buffer = (memoryValue == l)? ""+l:memoryValue.toString();
+				txt.setText(buffer);
+				txt.setSelection(buffer.length());
+				return;
+			}
+			else {
+				long l = Math.round(memoryValue);
+				forInput = (memoryValue == l)? ""+l:memoryValue.toString();
+			}
 		} else if (forInput.equals(".")) {
 			if (Pattern.matches(".*\\d*\\.\\d*$", left) || Pattern.matches("^\\d*\\.\\d*.*", right))
 				return;
-			else if (!Pattern.matches("\\d", left)) {
+			else if (!Pattern.matches(".*\\d", left)) {
 				forInput = 0+forInput;
 			}
 		} else if (Pattern.matches("[+*/]", forInput)){

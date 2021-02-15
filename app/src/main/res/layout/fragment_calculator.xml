@@ -15,9 +15,9 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Display2"
             android:textColor="#FFFFFF"
             android:textAllCaps="true"
-            android:textSize="44sp"
+            android:textSize="32sp"
             android:fontFamily="sans-serif-medium"
-            android:gravity="right|center_vertical"
+            android:gravity="right|bottom"
             android:paddingRight="15dp"
             android:paddingBottom="5dp"
             android:textIsSelectable="true"
@@ -26,7 +26,9 @@
             app:layout_constraintBottom_toTopOf="@+id/result"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            android:scrollbars="horizontal"
+            android:singleLine="true" />
 
     <TextView
             android:text=""
