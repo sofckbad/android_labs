@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".Register"
-        android:background="#333333">
+        android:background="@color/transparent">
 
     <LinearLayout
             android:orientation="vertical"
@@ -77,19 +77,6 @@
                     android:onClick="register_sign_up_click"
                     tools:ignore="OnClick" />
         </LinearLayout>
-
-        <TextView
-                android:id="@+id/register_alert"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display2"
-                android:textColor="@color/red_alert"
-                android:textAllCaps="true"
-                android:textSize="24sp"
-                android:fontFamily="sans-serif-medium"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                tools:visibility="invisible" />
-
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
