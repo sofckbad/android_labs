@@ -20,6 +20,7 @@ public class DBHelper extends SQLiteOpenHelper
 	public static final String COLUMN_IMAGE = "image";
 	public static final String COLUMN_MUSIC = "audio";
 	public static final String COLUMN_TEXT = "text";
+	public static final String COLUMN_COORDINATES = "coordinates";
 
 	public DBHelper(Context context) {
 		super(context, DATABASE_NAME, null, SCHEMA);
@@ -34,7 +35,7 @@ public class DBHelper extends SQLiteOpenHelper
 
 		db.execSQL("CREATE TABLE IF NOT EXISTS " + DATA + " (" + COLUMN_ID
 				+ " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_HEADER + " TEXT," + COLUMN_IMAGE
-				+ " TEXT, " + COLUMN_MUSIC + " TEXT, " + COLUMN_TEXT + " TEXT);");
+				+ " TEXT, " + COLUMN_MUSIC + " TEXT, " + COLUMN_TEXT + " TEXT, " + COLUMN_COORDINATES + " TEXT);");
 
 		db.execSQL("INSERT INTO "+ USERS +" (" + COLUMN_NAME
 				+ ", " + COLUMN_PASSWORD + ") VALUES ('admin', 'admin');");

@@ -1,7 +1,10 @@
 package com.example.lab1;
 
 import android.content.ContentUris;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -14,6 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 
@@ -32,15 +37,39 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 	@Override
 	public void onBindViewHolder(@NonNull RecyclerHolder holder, int position) {
 //		holder.image_content.setImageBitmap(MediaStore.Images.Media.getBitmap(getContentResolver(),Uri.parse(Main.imageArray.get(position))));
-		holder.image_content.setImageURI(Uri.parse(Main.imageArray.get(position)));
-		holder.text_content.setText(Main.textArray.get(position));
-		holder.header_content.setText(Main.headerArray.get(position));
+		holder.image_content.setImageURI(Uri.parse(Main.imageArray.get(holder.getAdapterPosition())));
+		holder.text_content.setText(Main.textArray.get(holder.getAdapterPosition()));
+		holder.header_content.setText(Main.headerArray.get(holder.getAdapterPosition()));
+		if (holder.getAdapterPosition() == Main.numWhoPlaying) {
+			holder.seekBar.setVisibility(View.VISIBLE);
+			holder.seekBar.setMax(Main.mp.getDuration());
+			holder.seekBar.setProgress(Main.mp.getCurrentPosition());
+			Main.currentSeekBar = holder.seekBar;
+		}
 
+		Geocoder geocoder = new Geocoder(Main.activity, Locale.getDefault());
+		List<Address> addresses;
+		String[] coords = Main.coordinatesArray.get(holder.getAdapterPosition()).split(",");
+		try {
+			addresses = geocoder.getFromLocation(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), 1);
+			if (addresses.size() == 0) throw new NumberFormatException();
+			String locality = (addresses.get(0).getLocality() == null)?"":addresses.get(0).getLocality();
+			String country = (addresses.get(0).getCountryName() == null)?"":addresses.get(0).getCountryName()+" ";
+			holder.address_content.setText((country + locality).equals("")?Main.coordinatesArray.get(holder.getAdapterPosition()):(country + locality));
+		} catch (IOException | NumberFormatException e) {
+			e.printStackTrace();
+			holder.address_content.setText(Main.coordinatesArray.get(holder.getAdapterPosition()));
+		}
+		holder.address_content.setOnClickListener(v -> {
+			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:"+Main.coordinatesArray.get(holder.getAdapterPosition())));
+			intent.putExtra("position", holder.getAdapterPosition());
+			Main.activity.startActivityForResult(intent, Main.MAP_REQUEST);
+		});
 		holder.playButton.setOnClickListener(v -> {
 			try {
-				if (position != Main.numWhoPlaying){
+				if (holder.getAdapterPosition() != Main.numWhoPlaying){
 					Main.mp.reset();
-					Main.mp.setDataSource(Main.application, ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, Integer.parseInt(Main.mediaArray.get(position).split("%3A")[1])));
+					Main.mp.setDataSource(Main.application, ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, Integer.parseInt(Main.mediaArray.get(holder.getAdapterPosition()).split("%3A")[1])));
 					Main.mp.prepare();
 					Main.mp.start();
 					((Button) v).setText("pause");
@@ -54,7 +83,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 					Main.currentSeekBar.setProgress(0);
 					Main.currentSeekBar.setMax(Main.mp.getDuration());
 					holder.seekBar.setMax(Main.mp.getDuration());
-					Main.numWhoPlaying = position;
+					Main.numWhoPlaying = holder.getAdapterPosition();
 				} else {
 					if (Main.mp.isPlaying()) {
 						Main.mp.pause();
@@ -83,7 +112,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 		db.execSQL("DELETE FROM " + DBHelper.DATA + " WHERE " + DBHelper.COLUMN_HEADER + " = ? AND " + DBHelper.COLUMN_IMAGE + " = ? AND " + DBHelper.COLUMN_MUSIC + " = ? AND " + DBHelper.COLUMN_TEXT + " = ?",
 				new Object[]{Main.headerArray.get(adapterPosition) ,Main.imageArray.get(adapterPosition), Main.mediaArray.get(adapterPosition), Main.textArray.get(adapterPosition)});
 
-		Toast.makeText(Main.application, "deleted", Toast.LENGTH_SHORT).show();
+		Main.activity.mainToast.setText("Удалено");
+		if (Main.activity.mainToast.getView().getWindowVisibility() != View.VISIBLE)
+			Main.activity.mainToast.show();
 
 		notifyItemRangeRemoved(adapterPosition, 1);
 
@@ -97,6 +128,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 		Main.imageArray.remove(adapterPosition);
 		Main.mediaArray.remove(adapterPosition);
 		Main.textArray.remove(adapterPosition);
+		Main.coordinatesArray.remove(adapterPosition);
 
 		db.close();
 	}

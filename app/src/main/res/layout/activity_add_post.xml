@@ -13,7 +13,7 @@
             android:id="@+id/header_post"
             android:textColorHint="@color/hint"
             android:hint="input header"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -24,7 +24,7 @@
             android:id="@+id/imageView"
             android:scaleType="centerCrop"
             app:srcCompat="@drawable/plus"
-            app:layout_constraintTop_toBottomOf="@+id/header_post"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -38,17 +38,28 @@
             android:textColorHint="@color/hint"
             android:hint="input text" />
 
+    <EditText
+            android:hint="input coordinates"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/coordinates_post"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:textColorHint="@color/hint"
+            app:layout_constraintTop_toBottomOf="@+id/text_post" />
+
     <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/music"
-            app:layout_constraintTop_toBottomOf="@+id/imageView"
+            app:layout_constraintTop_toBottomOf="@+id/header_post"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:hint="press to add music"
             android:textColorHint="@color/hint"
             app:layout_constraintHeight_min="40dp"
-            android:gravity="center" />
+            android:gravity="center"
+            app:layout_constraintHorizontal_bias="1.0" />
 
     <ImageButton
             android:layout_width="70dp"

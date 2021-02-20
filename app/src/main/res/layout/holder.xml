@@ -11,7 +11,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
@@ -22,8 +22,7 @@
                 android:id="@+id/content_text"
                 android:minLines="1"
                 tools:text="@string/lorem_ipsum"
-                android:autoLink="all"
-                android:padding="15dp"
+                android:autoLink="web|map"
                 android:textColor="#B3B3B3"
                 android:linksClickable="true"
                 android:textColorLink="@color/foreground"
@@ -37,7 +36,14 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintTop_toBottomOf="@+id/content_header" />
+                app:layout_constraintTop_toBottomOf="@+id/content_header"
+                android:scrollbars="none"
+                android:isScrollContainer="false"
+                android:overScrollMode="never"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp" />
 
         <ImageView
                 android:layout_height="@dimen/height"
@@ -50,17 +56,53 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+                android:id="@+id/content_address"
+                android:layout_weight="1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/content_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minLines="1"
+                tools:text="@string/lorem_ipsum"
+                android:autoLink="all"
+                android:textColor="#A8777777"
+                android:linksClickable="true"
+                android:textColorLink="@color/foreground"
+                android:scrollHorizontally="false"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:fontFamily="monospace"
+                android:textSize="10sp"
+                android:lineSpacingExtra="8sp"
+                android:clickable="false"
+                android:scrollbars="none"
+                android:isScrollContainer="false"
+                android:overScrollMode="never"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:drawableLeft="@drawable/location_4"
+                app:drawableTint="@color/foreground"
+                android:drawablePadding="10dp"
+                android:longClickable="true"
+                android:gravity="center_vertical" />
+
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:layout_constraintStart_toStartOf="parent"
+                android:id="@+id/linearLayout2"
+                app:layout_constraintTop_toBottomOf="@+id/content_address"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/content_text"
-                android:id="@+id/linearLayout2">
+                app:layout_constraintStart_toStartOf="parent">
 
             <Button
                     android:text="Play"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/playButton"
                     style="@style/Widget.AppCompat.Button.Borderless"
@@ -71,12 +113,15 @@
                     android:insetTop="0dp"
                     app:iconPadding="0dp"
                     android:fontFamily="monospace"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    android:layout_weight="3" />
 
             <SeekBar
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/seekBar4"
+                    android:id="@+id/music_bar"
                     android:layout_weight="1"
                     android:visibility="gone"
                     tools:visibility="visible" />
@@ -103,6 +148,27 @@
                 android:clickable="false"
                 android:textStyle="bold"
                 app:layout_constraintTop_toBottomOf="@+id/content_image"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:scrollbars="none"
+                android:isScrollContainer="false"
+                android:overScrollMode="never" />
+
+        <Button
+                android:text="Show full post"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/fullPostButton"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                app:elevation="0dp"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:insetBottom="0dp"
+                android:insetTop="0dp"
+                app:iconPadding="0dp"
+                android:fontFamily="monospace"
+                android:textSize="18sp"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>

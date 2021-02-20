@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 
 import android.Manifest;
 import android.app.Application;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -36,6 +37,7 @@ import java.util.Collections;
 public class Main extends AppCompatActivity {
 
 	public static Application application;
+	public static Main activity;
 
 	public static final int GOOGLE_REQUEST = 281;
 	public static final int VK_REQUEST = 282;
@@ -43,17 +45,20 @@ public class Main extends AppCompatActivity {
 	public static final int AUDIO_REQUEST = 1;
 	public static final int REGISTRATION_REQUEST = 2;
 	public static final int ADD_REQUEST = 3;
+	public static final int MAP_REQUEST = 4;
 
 	public static String header = null;
 	public static String image = null;
 	public static String audio = null;
 	public static String text = null;
+	public static String coordinates = null;
 
 
 	public static ArrayList<String> mediaArray = new ArrayList<>();
 	public static ArrayList<String> textArray = new ArrayList<>();
 	public static ArrayList<String> headerArray = new ArrayList<>();
 	public static ArrayList<String> imageArray = new ArrayList<>();
+	public static ArrayList<String> coordinatesArray = new ArrayList<>();
 
 	public static MediaPlayer mp = null;
 	public static SeekBar currentSeekBar = null;
@@ -71,6 +76,7 @@ public class Main extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		application = getApplication();
+		activity = this;
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity);
 		GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
@@ -143,11 +149,8 @@ public class Main extends AppCompatActivity {
 					image = data.getStringExtra("image");
 					audio = data.getStringExtra("audio");
 					text = data.getStringExtra("text");
-					intoDB(header ,image, audio, text);
-				} else {
-					mainToast.setText("Проблемы с добавлением поста");
-					if (mainToast.getView().getWindowVisibility() != View.VISIBLE)
-						mainToast.show();
+					coordinates = data.getStringExtra("coordinates");
+					intoDB(header ,image, audio, text, coordinates);
 				}
 				break;
 			case REGISTRATION_REQUEST:
@@ -159,6 +162,20 @@ public class Main extends AppCompatActivity {
 				}
 				if (mainToast.getView().getWindowVisibility() != View.VISIBLE)
 					mainToast.show();
+				break;
+			case MAP_REQUEST:
+				SQLiteDatabase db = (new DBHelper(this)).getWritableDatabase();
+				if (resultCode == RESULT_OK) {
+					int i = -1;
+					i = data.getIntExtra("position", i);
+					db.execSQL("update "+DBHelper.DATA+" set " + DBHelper.COLUMN_COORDINATES +" = ? where "+DBHelper.COLUMN_COORDINATES+" = '" + data.getData().toString().split("geo:")[1] + "'",
+							new Object[] { data.getStringExtra("newCoords") });
+					coordinatesArray.set(i, data.getStringExtra("newCoords"));
+//					i = data.getIntExtra("position", -1);
+					recyclerFragment.recyclerAdapter.notifyItemChanged(i);
+				}
+				db.close();
+				break;
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
@@ -198,6 +215,7 @@ public class Main extends AppCompatActivity {
 			imageArray.add(userCursor.getString(2));
 			mediaArray.add(userCursor.getString(3));
 			textArray.add(userCursor.getString(4));
+			coordinatesArray.add(userCursor.getString(5));
 			userCursor.moveToNext();
 		}
 
@@ -205,10 +223,10 @@ public class Main extends AppCompatActivity {
 		userCursor.close();
 	}
 
-	public void intoDB(String header,String image, String audio, String text) {
+	public void intoDB(String header,String image, String audio, String text, String coordinates) {
 		if (image == null || audio == null || text == null) return;
 		SQLiteDatabase db = (new DBHelper(this)).getWritableDatabase();
-		db.execSQL("INSERT INTO " + DBHelper.DATA + " (" + DBHelper.COLUMN_HEADER + ", " + DBHelper.COLUMN_IMAGE + ", " + DBHelper.COLUMN_MUSIC + ", " + DBHelper.COLUMN_TEXT + ") VALUES (?, ?, ?, ?)", new Object[] { header ,image, audio, text });
+		db.execSQL("INSERT INTO " + DBHelper.DATA + " (" + DBHelper.COLUMN_HEADER + ", " + DBHelper.COLUMN_IMAGE + ", " + DBHelper.COLUMN_MUSIC + ", " + DBHelper.COLUMN_TEXT + ", " + DBHelper.COLUMN_COORDINATES + ") VALUES (?, ?, ?, ?, ?)", new Object[] { header ,image, audio, text, coordinates });
 
 		recyclerFragment.recyclerAdapter.addItem();
 
@@ -220,6 +238,7 @@ public class Main extends AppCompatActivity {
 		imageArray.add(image);
 		mediaArray.add(audio);
 		textArray.add(text);
+		coordinatesArray.add(coordinates);
 
 		recyclerFragment.recyclerAdapter.add(1);
 
@@ -227,12 +246,14 @@ public class Main extends AppCompatActivity {
 		Main.image = null;
 		Main.audio = null;
 		Main.text = null;
+		Main.coordinates = null;
 
 		db.close();
 	}
 
 	public void addPost(View view) {
 		startActivityForResult(new Intent(this, AddPost.class), ADD_REQUEST);
+//		startActivity(new Intent(this, MapsActivity.class));
 	}
 
 

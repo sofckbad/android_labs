@@ -19,7 +19,7 @@ public class RecyclerFragment extends Fragment {
 
 	RecyclerAdapter recyclerAdapter;
 	RecyclerView recyclerView;
-	int backButton = 0;
+	static int backButton = 0;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -34,6 +34,8 @@ public class RecyclerFragment extends Fragment {
 			@Override
 			public void handleOnBackPressed() {
 				switch (backButton) {
+					case 1:
+						backButton--;
 					case 0:
 						Toast.makeText(getActivity(), "Еще раз для выхода", Toast.LENGTH_SHORT).show();
 						backButton--;
