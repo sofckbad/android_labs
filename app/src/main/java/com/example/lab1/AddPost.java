@@ -26,7 +26,7 @@ public class AddPost extends AppCompatActivity {
 	TextView music;
 	EditText text;
 	EditText header;
-	Button coordinates;
+	TextView coordinates;
 	ImageButton button;
 	Intent intent;
 	Toast toast;

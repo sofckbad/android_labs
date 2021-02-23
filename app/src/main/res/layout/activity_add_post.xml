@@ -38,7 +38,7 @@
             android:textColorHint="@color/hint"
             android:hint="input text" />
 
-    <Button
+    <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/coordinates_post"
@@ -53,7 +53,8 @@
             android:insetTop="0dp"
             android:insetLeft="0dp"
             style="@style/Widget.AppCompat.Button.Borderless"
-            android:hint="press to set coordinates" />
+            android:hint="press to set coordinates"
+            app:drawableLeftCompat="@drawable/location_4" />
 
     <TextView
             android:layout_width="match_parent"
