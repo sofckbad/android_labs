@@ -19,12 +19,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 
 	int countOfElement;
 
 	public RecyclerAdapter(int count) { this.countOfElement = count; }
+	public RecyclerAdapter() {}
+	public void setCountOfElement(int countOfElement) {
+		this.countOfElement = countOfElement;
+	}
 	public void add(int add) {countOfElement += add;}
 
 	@NonNull
@@ -69,7 +75,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 			try {
 				if (holder.getAdapterPosition() != Main.numWhoPlaying){
 					Main.mp.reset();
-					Main.mp.setDataSource(Main.application, ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, Integer.parseInt(Main.mediaArray.get(holder.getAdapterPosition()).split("%3A")[1])));
+//					Main.mediaArray.get(holder.getAdapterPosition()).split("%3A")[1]
+					Matcher m = Pattern.compile("\\d*$").matcher(Main.mediaArray.get(holder.getAdapterPosition()));
+					m.find();
+					int i = Integer.parseInt(m.group());
+					Main.mp.setDataSource(Main.application, ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, i));
 					Main.mp.prepare();
 					Main.mp.start();
 					((Button) v).setText("pause");

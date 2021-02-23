@@ -11,6 +11,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,6 +21,12 @@ public class RecyclerFragment extends Fragment {
 	RecyclerAdapter recyclerAdapter;
 	RecyclerView recyclerView;
 	static int backButton = 0;
+
+	@Override
+	public void onCreate(Bundle b) {
+		super.onCreate(b);
+		recyclerAdapter = new RecyclerAdapter();
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,15 +61,16 @@ public class RecyclerFragment extends Fragment {
 			}
 		};
 		requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
-		recyclerAdapter = new RecyclerAdapter(Main.mediaArray.size());
+
+
 		recyclerView = getActivity().findViewById(R.id.recycler);
-		recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL,
+		recyclerView.setLayoutManager(new LinearLayoutManager(null, LinearLayoutManager.VERTICAL,
 				false));
 		recyclerView.setHasFixedSize(true);
 		recyclerView.setAdapter(recyclerAdapter);
 
 		ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
-				ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+				ItemTouchHelper.LEFT) {
 
 			@Override
 			public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder,
@@ -76,5 +84,7 @@ public class RecyclerFragment extends Fragment {
 			}
 		});
 		itemTouchHelper.attachToRecyclerView(recyclerView);
+
+		recyclerAdapter.setCountOfElement(Main.mediaArray.size());
 	}
 }

@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment;
 
 import android.Manifest;
 import android.app.Application;
-import android.content.ClipboardManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -81,7 +80,7 @@ public class Main extends AppCompatActivity {
 		setContentView(R.layout.activity);
 		GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
 		mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-		getSupportFragmentManager().beginTransaction().add(R.id.main_content, login).commit();
+		switchFragment(R.id.main_content, login);
 
 		mainToast = Toast.makeText(this, "", Toast.LENGTH_LONG);
 
@@ -89,13 +88,8 @@ public class Main extends AppCompatActivity {
 			ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, 1);
 		}
 
-//		image = "content://media/external/images/media/85938";
-//		audio = "content://com.android.providers.media.documents/document/audio%3A72426";
-//		text = "https://overcoder.net/q/4076/%D0%BA%D0%B0%D0%BA-%D1%81%D0%B4%D0%B5%D0%BB%D0%B0%D1%82%D1%8C-%D1%81%D1%81%D1%8B%D0%BB%D0%BA%D0%B8-%D0%B2-textview-%D0%BA%D0%BB%D0%B8%D0%BA%D0%B0%D0%B1%D0%B5%D0%BB%D1%8C%D0%BD%D1%8B%D0%BC%D0%B8";
-
 		mp = new MediaPlayer();
 		fromDB();
-
 
 		Thread t = new Thread() {
 			@Override
@@ -116,8 +110,6 @@ public class Main extends AppCompatActivity {
 		t.setDaemon(true);
 		t.start();
 	}
-
-
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode,Intent data) {
@@ -172,6 +164,7 @@ public class Main extends AppCompatActivity {
 							new Object[] { data.getStringExtra("newCoords") });
 					coordinatesArray.set(i, data.getStringExtra("newCoords"));
 //					i = data.getIntExtra("position", -1);
+					Toast.makeText(this, "Метка сохранена", Toast.LENGTH_SHORT).show();
 					recyclerFragment.recyclerAdapter.notifyItemChanged(i);
 				}
 				db.close();
@@ -208,6 +201,12 @@ public class Main extends AppCompatActivity {
 		SQLiteDatabase db = (new DBHelper(this)).getWritableDatabase();
 		Cursor userCursor;
 		userCursor = db.rawQuery("select * from " + DBHelper.DATA, null);
+
+		if (mediaArray.size() != 0) mediaArray.clear();
+		if (coordinatesArray.size() != 0) coordinatesArray.clear();
+		if (headerArray.size() != 0) headerArray.clear();
+		if (textArray.size() != 0) textArray.clear();
+		if (imageArray.size() != 0) imageArray.clear();
 
 		userCursor.moveToFirst();
 		while (!userCursor.isAfterLast()) {

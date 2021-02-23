@@ -4,13 +4,21 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class AddPost extends AppCompatActivity {
 
@@ -18,10 +26,11 @@ public class AddPost extends AppCompatActivity {
 	TextView music;
 	EditText text;
 	EditText header;
-	EditText coordinates;
+	Button coordinates;
 	ImageButton button;
 	Intent intent;
 	Toast toast;
+	double[] coords = {0,0};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,24 +50,16 @@ public class AddPost extends AppCompatActivity {
 
 		image.setOnClickListener(v -> startActivityForResult(new Intent(Intent.ACTION_PICK).setType("image/*"), Main.IMAGE_REQUEST));
 		music.setOnClickListener(v -> startActivityForResult(new Intent(Intent.ACTION_GET_CONTENT).setType("audio/*"), Main.AUDIO_REQUEST));
+		coordinates.setOnClickListener(v -> {
+			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:"+coords[0] + ',' + coords[1]));
+//			intent.putExtra("position", holder.getAdapterPosition());
+			startActivityForResult(intent, Main.MAP_REQUEST);
+		});
 		button.setOnClickListener(v -> {
-			if (intent.getStringExtra("image") != null && music.getText().length() != 0 && text.getText().length() != 0 && header.getText().length() != 0 && coordinates.getText().length() != 0) {
+			if (intent.getStringExtra("image") != null && music.getText().length() != 0 && text.getText().length() != 0 && header.getText().length() != 0) {
 				intent.putExtra("text", text.getText().toString());
 				intent.putExtra("header", header.getText().toString());
-				intent.putExtra("coordinates", coordinates.getText().toString());
-				try {
-					String[] coords = coordinates.getText().toString().split(",");
-					if (coords.length != 2) throw new NumberFormatException();
-					double lat = Double.parseDouble(coords[0]);
-					double lon = Double.parseDouble(coords[1]);
-					if (lat <= -90 || lat >= 90 || lon <= -180 || lon >= 180) throw new NumberFormatException();
-				}
-				catch (NumberFormatException e) {
-					e.printStackTrace();
-					toast.setText("Не верно введены координаты, используйте (-90.0,90.0),(-180.0,180.0)");
-					if (toast.getView().getWindowVisibility() != View.VISIBLE) toast.show();
-					return;
-				}
+				intent.putExtra("coordinates", coords[0] + "," + coords[1]);
 				setResult(RESULT_OK, intent);
 				finish();
 			} else {
@@ -84,6 +85,25 @@ public class AddPost extends AppCompatActivity {
 				if (resultCode == RESULT_OK){
 					music.setText(data.getData().toString());
 					intent.putExtra("audio", data.getData().toString());
+				}
+				break;
+			case Main.MAP_REQUEST :
+				if (resultCode == RESULT_OK) {
+					Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+					List<Address> addresses;
+					String[] s = data.getStringExtra("newCoords").split(",");
+					coords[0] = Double.parseDouble(s[0]);
+					coords[1] = Double.parseDouble(s[1]);
+					try {
+						addresses = geocoder.getFromLocation(coords[0], coords[1], 1);
+						if (addresses.size() == 0) throw new NumberFormatException();
+						String locality = (addresses.get(0).getLocality() == null)?"":addresses.get(0).getLocality();
+						String country = (addresses.get(0).getCountryName() == null)?"":addresses.get(0).getCountryName()+" ";
+						coordinates.setText((country + locality).equals("")?(coords[0] + "," + coords[1]):(country + locality));
+					} catch (IOException | NumberFormatException e) {
+						e.printStackTrace();
+						coordinates.setText(coords[0] + "," + coords[1]);
+					}
 				}
 				break;
 		}
