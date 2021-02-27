@@ -45,13 +45,6 @@ public class RecyclerHolder extends RecyclerView.ViewHolder {
 		change = itemView.findViewById(R.id.change);
 		user_name = itemView.findViewById(R.id.userName);
 
-		if (Main.activity.isAdmin) {
-			change.setVisibility(View.VISIBLE);
-			change.setOnClickListener(v -> {
-
-			});
-		}
-
 		address_content.setOnLongClickListener(v -> {
 			((TextView) v).getText();
 			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {

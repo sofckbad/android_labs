@@ -14,6 +14,7 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.lab1.activities.AddPost;
 import com.example.lab1.activities.Main;
 
 import java.io.IOException;
@@ -53,9 +54,24 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 			Main.currentSeekBar = holder.seekBar;
 		}
 
+		String[] coords = Main.coordinatesArray.get(holder.getAdapterPosition()).split(",");
+
+		if (Main.activity.isAdmin) {
+			holder.change.setVisibility(View.VISIBLE);
+			holder.change.setOnClickListener(v -> {
+				Intent intent = new Intent(Main.activity, AddPost.class);
+				intent.putExtra("position", holder.getAdapterPosition());
+				intent.putExtra("old_image", Main.imageArray.get(holder.getAdapterPosition()));
+				intent.putExtra("old_audio", Main.mediaArray.get(holder.getAdapterPosition()));
+				intent.putExtra("old_text", Main.textArray.get(holder.getAdapterPosition()));
+				intent.putExtra("old_header", Main.headerArray.get(holder.getAdapterPosition()));
+				intent.putExtra("old_coordinates", Main.coordinatesArray.get(holder.getAdapterPosition()));
+				Main.activity.startActivityForResult(intent, Main.CHANGE_REQUEST);
+			});
+		}
+
 		Geocoder geocoder = new Geocoder(Main.activity, Locale.getDefault());
 		List<Address> addresses;
-		String[] coords = Main.coordinatesArray.get(holder.getAdapterPosition()).split(",");
 		try {
 			addresses = geocoder.getFromLocation(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), 1);
 			if (addresses.size() == 0) throw new NumberFormatException();

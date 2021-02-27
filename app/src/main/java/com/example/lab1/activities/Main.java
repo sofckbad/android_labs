@@ -50,6 +50,7 @@ public class Main extends AppCompatActivity {
 	public static final int REGISTRATION_REQUEST = 2;
 	public static final int ADD_REQUEST = 3;
 	public static final int MAP_REQUEST = 4;
+	public static final int CHANGE_REQUEST = 5;
 
 	public static String header = null;
 	public static String image = null;
@@ -69,7 +70,7 @@ public class Main extends AppCompatActivity {
 	public static InDataBase dataLoader = new InDataBase();
 	public static SeekBar currentSeekBar = null;
 	public static Button currentButton = null;
-	public static int numWhoPlaying = -1;
+	public static int numWhoPlaying = - 1;
 	public static int idCurrentUser = 1;
 	public static String curName = "admin";
 	public boolean isAdmin = true;
@@ -105,14 +106,12 @@ public class Main extends AppCompatActivity {
 		Thread t = new Thread() {
 			@Override
 			public void run() {
-				while (mp != null)
-				{
+				while (mp != null) {
 					try {
 						if (currentSeekBar != null)
-						currentSeekBar.setProgress(mp.getCurrentPosition());
+							currentSeekBar.setProgress(mp.getCurrentPosition());
 						Thread.sleep(1000);
-					}
-					catch (InterruptedException e) {
+					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 				}
@@ -123,8 +122,8 @@ public class Main extends AppCompatActivity {
 	}
 
 	@Override
-	public void onActivityResult(int requestCode, int resultCode,Intent data) {
-		switch (requestCode){
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
 			case VK_REQUEST:
 				//TODO auth token vk
 				VK.onActivityResult(requestCode, resultCode, data, new VKAuthCallback() {
@@ -132,10 +131,12 @@ public class Main extends AppCompatActivity {
 					public void onLogin(@NotNull VKAccessToken vkAccessToken) { switchFragment(R.id.main_content, recyclerFragment); }
 
 					@Override
-					public void onLoginFailed(int i) { mainToast.setText("didn't pass vk authorization");
+					public void onLoginFailed(int i) {
+						mainToast.setText("didn't pass vk authorization");
 						if (mainToast.getView().getWindowVisibility() != View.VISIBLE)
 							mainToast.show();
-					}});
+					}
+				});
 				break;
 			case GOOGLE_REQUEST:
 				try {
@@ -143,18 +144,17 @@ public class Main extends AppCompatActivity {
 					switchFragment(R.id.main_content, recyclerFragment);
 				} catch (ApiException e) {
 					mainToast.setText("didn't pass google authorization");
-					if (mainToast.getView().getWindowVisibility() != View.VISIBLE)
-						mainToast.show();
+					if (mainToast.getView().getWindowVisibility() != View.VISIBLE) mainToast.show();
 				}
 				break;
 			case ADD_REQUEST:
-				if (resultCode == RESULT_OK){
+				if (resultCode == RESULT_OK) {
 					header = data.getStringExtra("header");
 					image = data.getStringExtra("image");
 					audio = data.getStringExtra("audio");
 					text = data.getStringExtra("text");
 					coordinates = data.getStringExtra("coordinates");
-					dataLoader.intoDB(header ,image, audio, text, coordinates);
+					dataLoader.intoDB(header, image, audio, text, coordinates);
 				}
 				break;
 			case REGISTRATION_REQUEST:
@@ -164,16 +164,14 @@ public class Main extends AppCompatActivity {
 				} else {
 					mainToast.setText("Email is busy");
 				}
-				if (mainToast.getView().getWindowVisibility() != View.VISIBLE)
-					mainToast.show();
+				if (mainToast.getView().getWindowVisibility() != View.VISIBLE) mainToast.show();
 				break;
 			case MAP_REQUEST:
 				SQLiteDatabase db = (new DBHelper(this)).getWritableDatabase();
 				if (resultCode == RESULT_OK) {
-					int i = -1;
+					int i = - 1;
 					i = data.getIntExtra("position", i);
-					db.execSQL("update "+DBHelper.DATA+" set " + DBHelper.COLUMN_COORDINATES +" = ? where "+DBHelper.COLUMN_COORDINATES+" = '" + data.getData().toString().split("geo:")[1] + "'",
-							new Object[] { data.getStringExtra("newCoords") });
+					db.execSQL("update " + DBHelper.DATA + " set " + DBHelper.COLUMN_COORDINATES + " = ? where " + DBHelper.COLUMN_COORDINATES + " = '" + data.getData().toString().split("geo:")[1] + "'", new Object[] { data.getStringExtra("newCoords") });
 					coordinatesArray.set(i, data.getStringExtra("newCoords"));
 //					i = data.getIntExtra("position", -1);
 					Toast.makeText(this, "Метка сохранена", Toast.LENGTH_SHORT).show();
@@ -181,12 +179,29 @@ public class Main extends AppCompatActivity {
 				}
 				db.close();
 				break;
+			case CHANGE_REQUEST:
+				if (resultCode == RESULT_OK) {
+					dataLoader.change(data);
+					int i = data.getIntExtra("position", - 1);
+					headerArray.set(i, data.getStringExtra("header"));
+					imageArray.set(i, data.getStringExtra("image"));
+					textArray.set(i, data.getStringExtra("text"));
+					mediaArray.set(i, data.getStringExtra("audio"));
+					coordinatesArray.set(i, data.getStringExtra("coordinates"));
+
+					if (numWhoPlaying == i) {
+						mp.reset();
+						numWhoPlaying = -1;
+					}
+					recyclerFragment.recyclerAdapter.notifyItemChanged(i);
+				}
+				break;
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	public void switchFragment(int id, Fragment fragment) {
-		getSupportFragmentManager().beginTransaction().replace( id, fragment).commitAllowingStateLoss();
+		getSupportFragmentManager().beginTransaction().replace(id, fragment).commitAllowingStateLoss();
 	}
 
 	public void register_sign_up_click(View view) {

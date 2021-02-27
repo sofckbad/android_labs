@@ -1,5 +1,6 @@
 package com.example.lab1;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.View;
@@ -108,5 +109,27 @@ public class InDataBase implements dataInterface {
 		Main.nameArray.remove(adapterPosition);
 
 		db.close();
+	}
+
+	@Override
+	public void change(Intent data) {
+		SQLiteDatabase db = (new DBHelper(Main.application)).getWritableDatabase();
+		db.execSQL(new StringBuilder()
+				.append("UPDATE ")
+				.append(DBHelper.DATA)
+				.append(" SET ")
+				.append(DBHelper.COLUMN_HEADER).append(" = '").append(data.getStringExtra("header")).append("',").append(" ")
+				.append(DBHelper.COLUMN_IMAGE).append(" = '").append(data.getStringExtra("image")).append("',").append(" ")
+				.append(DBHelper.COLUMN_TEXT).append(" = '").append(data.getStringExtra("text")).append("',").append(" ")
+				.append(DBHelper.COLUMN_MUSIC).append(" = '").append(data.getStringExtra("audio")).append("',").append(" ")
+				.append(DBHelper.COLUMN_COORDINATES).append(" = '").append(data.getStringExtra("coordinates")).append("'")
+				.append(" WHERE ")
+				.append(DBHelper.COLUMN_HEADER).append(" = '").append(data.getStringExtra("old_header")).append("' and ")
+				.append(DBHelper.COLUMN_IMAGE).append(" = '").append(data.getStringExtra("old_image")).append("' and ")
+				.append(DBHelper.COLUMN_TEXT).append(" = '").append(data.getStringExtra("old_text")).append("' and ")
+				.append(DBHelper.COLUMN_MUSIC).append(" = '").append(data.getStringExtra("old_audio")).append("' and ")
+				.append(DBHelper.COLUMN_COORDINATES).append(" = '").append(data.getStringExtra("old_coordinates")).append("'")
+				.toString(), new Object[]{});
+
 	}
 }

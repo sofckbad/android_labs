@@ -49,6 +49,32 @@ public class AddPost extends AppCompatActivity {
 
 		intent = getIntent();
 
+		if (intent.getStringExtra("old_image") != null) {
+			image.setImageURI(Uri.parse(intent.getStringExtra("old_image")));
+			music.setText(intent.getStringExtra("old_audio"));
+			text.setText(intent.getStringExtra("old_text"));
+			header.setText(intent.getStringExtra("old_header"));
+
+			intent.putExtra("image", intent.getStringExtra("old_image"));
+			intent.putExtra("audio", intent.getStringExtra("old_audio"));
+
+			String[] s = intent.getStringExtra("old_coordinates").split(",");
+			Geocoder geocoder = new Geocoder(Main.activity, Locale.getDefault());
+			List<Address> addresses;
+			try {
+				addresses = geocoder.getFromLocation(Double.parseDouble(s[0]), Double.parseDouble(s[1]), 1);
+				if (addresses.size() == 0) throw new NumberFormatException();
+				String locality = (addresses.get(0).getLocality() == null) ? "" : addresses.get(0).getLocality();
+				String country = (addresses.get(0).getCountryName() == null) ? "" : addresses.get(0).getCountryName() + " ";
+				coordinates.setText((country + locality).equals("") ? Main.coordinatesArray.get(intent.getIntExtra("position", - 1)) : (country + locality));
+			} catch (IOException | NumberFormatException e) {
+				e.printStackTrace();
+				coordinates.setText(intent.getStringExtra("old_coordinates"));
+			}
+		}
+
+
+
 		image.setOnClickListener(v -> startActivityForResult(new Intent(Intent.ACTION_PICK).setType("image/*"), Main.IMAGE_REQUEST));
 		music.setOnClickListener(v -> startActivityForResult(new Intent(Intent.ACTION_GET_CONTENT).setType("audio/*"), Main.AUDIO_REQUEST));
 		coordinates.setOnClickListener(v -> {

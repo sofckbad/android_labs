@@ -172,8 +172,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/change"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 android:visibility="gone"
                 tools:visibility="visible"
                 style="@style/Widget.AppCompat.Button.Borderless"
@@ -182,7 +180,9 @@
                 android:insetBottom="0dp"
                 android:insetTop="0dp"
                 android:insetLeft="0dp"
-                app:iconPadding="0dp" />
+                app:iconPadding="0dp"
+                app:layout_constraintBottom_toBottomOf="@+id/content_image"
+                app:layout_constraintEnd_toEndOf="parent" />
 
         <TextView
                 android:text="userName"
