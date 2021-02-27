@@ -1,4 +1,4 @@
-package com.example.lab1;
+package com.example.lab1.fragments;
 
 import androidx.fragment.app.Fragment;
 
@@ -10,6 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.lab1.DBHelper;
+import com.example.lab1.R;
+import com.example.lab1.activities.Main;
 
 public class Login extends Fragment {
 	@Override
@@ -35,9 +39,17 @@ public class Login extends Fragment {
 				mainToast.show();
 		}
 		else {
-			userCursor = db.rawQuery("select * from " + DBHelper.USERS + " where " + DBHelper.COLUMN_NAME + " = '" + email + "' and " + DBHelper.COLUMN_PASSWORD + " = '" + password + "'", null);
+			String s = "select "+DBHelper.COLUMN_ID+", "+DBHelper.COLUMN_NAME+" from " + DBHelper.USERS + " where " + DBHelper.COLUMN_NAME + " = '" + email + "' and " + DBHelper.COLUMN_PASSWORD + " = '" + password + "'";
+			userCursor = db.rawQuery(s, null);
 			if (userCursor.getCount() == 1) {
-				((Main) getActivity()).switchFragment(R.id.main_content, ((Main) getActivity()).recyclerFragment);
+				userCursor.moveToFirst();
+				if (userCursor.getString(1).equals("admin"))
+					Main.activity.isAdmin = true;
+				else
+					Main.activity.isAdmin = false;
+				Main.curName = userCursor.getString(1);
+				Main.idCurrentUser = userCursor.getInt(0);
+				Main.activity.switchFragment(R.id.main_content, ((Main) getActivity()).recyclerFragment);
 			} else {
 				mainToast.setText("User is not registered");
 				if (mainToast.getView().getWindowVisibility() != View.VISIBLE)

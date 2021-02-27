@@ -1,4 +1,4 @@
-package com.example.lab1;
+package com.example.lab1.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.Toast;
+
+import com.example.lab1.DBHelper;
 
 public class InsertIntoDB extends AppCompatActivity {
 
@@ -24,6 +26,7 @@ public class InsertIntoDB extends AppCompatActivity {
 		}
 		catch (SQLiteConstraintException e) {
 			setResult(RESULT_CANCELED);
+			e.printStackTrace();
 		}
 		finish();
 	}

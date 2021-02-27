@@ -22,7 +22,7 @@
                 android:value="@string/google_maps_key" />
 
         <activity
-                android:name="com.example.lab1.MapsActivity"
+                android:name="com.example.lab1.activities.MapsActivity"
                 android:label="@string/title_activity_maps">
             <intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW" />
@@ -33,7 +33,7 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".WebActivity"
+                android:name=".activities.WebActivity"
                 android:configChanges="screenSize|keyboardHidden|orientation">
             <intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW" />
@@ -43,10 +43,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".AddPost" />
-        <activity android:name=".InsertIntoDB" />
+        <activity android:name=".activities.AddPost" />
+        <activity android:name=".activities.InsertIntoDB" />
         <activity
-                android:name=".Main"
+                android:name=".activities.Main"
                 android:configChanges="screenSize|keyboardHidden|orientation"
                 android:screenOrientation="portrait">
             <intent-filter>

@@ -1,4 +1,4 @@
-package com.example.lab1;
+package com.example.lab1.fragments;
 
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -11,16 +11,19 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.lab1.R;
+import com.example.lab1.RecyclerAdapter;
+import com.example.lab1.activities.Main;
+
 public class RecyclerFragment extends Fragment {
 
-	RecyclerAdapter recyclerAdapter;
+	public RecyclerAdapter recyclerAdapter;
 	RecyclerView recyclerView;
-	static int backButton = 0;
+	public static int backButton = 0;
 
 	@Override
 	public void onCreate(Bundle b) {
@@ -80,7 +83,7 @@ public class RecyclerFragment extends Fragment {
 
 			@Override
 			public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-				recyclerAdapter.removeItemAt(viewHolder.getAdapterPosition());
+				Main.dataLoader.removeItemAt(viewHolder.getAdapterPosition());
 			}
 		});
 		itemTouchHelper.attachToRecyclerView(recyclerView);

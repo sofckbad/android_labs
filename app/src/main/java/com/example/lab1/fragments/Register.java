@@ -1,4 +1,4 @@
-package com.example.lab1;
+package com.example.lab1.fragments;
 
 import androidx.fragment.app.Fragment;
 
@@ -10,6 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.lab1.DBHelper;
+import com.example.lab1.activities.InsertIntoDB;
+import com.example.lab1.R;
+import com.example.lab1.activities.Main;
 
 import java.util.regex.Pattern;
 

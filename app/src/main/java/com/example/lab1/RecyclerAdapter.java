@@ -2,7 +2,6 @@ package com.example.lab1;
 
 import android.content.ContentUris;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
@@ -11,10 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.lab1.activities.Main;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,7 +26,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 
 	int countOfElement;
 
-	public RecyclerAdapter(int count) { this.countOfElement = count; }
 	public RecyclerAdapter() {}
 	public void setCountOfElement(int countOfElement) {
 		this.countOfElement = countOfElement;
@@ -46,6 +45,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 		holder.image_content.setImageURI(Uri.parse(Main.imageArray.get(holder.getAdapterPosition())));
 		holder.text_content.setText(Main.textArray.get(holder.getAdapterPosition()));
 		holder.header_content.setText(Main.headerArray.get(holder.getAdapterPosition()));
+		holder.user_name.setText(Main.nameArray.get(holder.getAdapterPosition()));
 		if (holder.getAdapterPosition() == Main.numWhoPlaying) {
 			holder.seekBar.setVisibility(View.VISIBLE);
 			holder.seekBar.setMax(Main.mp.getDuration());
@@ -117,31 +117,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 		return countOfElement;
 	}
 
-	public void removeItemAt(int adapterPosition) {
-		SQLiteDatabase db = (new DBHelper(Main.application)).getWritableDatabase();
-		db.execSQL("DELETE FROM " + DBHelper.DATA + " WHERE " + DBHelper.COLUMN_HEADER + " = ? AND " + DBHelper.COLUMN_IMAGE + " = ? AND " + DBHelper.COLUMN_MUSIC + " = ? AND " + DBHelper.COLUMN_TEXT + " = ?",
-				new Object[]{Main.headerArray.get(adapterPosition) ,Main.imageArray.get(adapterPosition), Main.mediaArray.get(adapterPosition), Main.textArray.get(adapterPosition)});
-
-		Main.activity.mainToast.setText("Удалено");
-		if (Main.activity.mainToast.getView().getWindowVisibility() != View.VISIBLE)
-			Main.activity.mainToast.show();
-
-		notifyItemRangeRemoved(adapterPosition, 1);
-
-		countOfElement--;
-		if (Main.numWhoPlaying == adapterPosition) {
-			Main.mp.reset();
-			Main.numWhoPlaying = -1;
-		}
-
-		Main.headerArray.remove(adapterPosition);
-		Main.imageArray.remove(adapterPosition);
-		Main.mediaArray.remove(adapterPosition);
-		Main.textArray.remove(adapterPosition);
-		Main.coordinatesArray.remove(adapterPosition);
-
-		db.close();
-	}
 	public void addItem() {
 		notifyItemRangeInserted(countOfElement, 1);
 	}

@@ -1,4 +1,4 @@
-package com.example.lab1;
+package com.example.lab1.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import com.example.lab1.R;
 
 public class WebActivity extends AppCompatActivity {
 	WebView webView;

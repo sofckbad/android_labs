@@ -12,18 +12,22 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.lab1.activities.Main;
+import com.example.lab1.fragments.RecyclerFragment;
 
 public class RecyclerHolder extends RecyclerView.ViewHolder {
 
 	TextView text_content;
 	TextView header_content;
 	TextView address_content;
+	TextView user_name;
 	ImageView image_content;
 	ConstraintLayout constraintLayout;
 	Button playButton;
 	Button fullPostButton;
+	Button change;
 	SeekBar seekBar;
 	boolean isHidden = true;
 
@@ -38,6 +42,15 @@ public class RecyclerHolder extends RecyclerView.ViewHolder {
 		playButton = itemView.findViewById(R.id.playButton);
 		fullPostButton = itemView.findViewById(R.id.fullPostButton);
 		seekBar = itemView.findViewById(R.id.music_bar);
+		change = itemView.findViewById(R.id.change);
+		user_name = itemView.findViewById(R.id.userName);
+
+		if (Main.activity.isAdmin) {
+			change.setVisibility(View.VISIBLE);
+			change.setOnClickListener(v -> {
+
+			});
+		}
 
 		address_content.setOnLongClickListener(v -> {
 			((TextView) v).getText();

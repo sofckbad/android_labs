@@ -1,4 +1,4 @@
-package com.example.lab1;
+package com.example.lab1.activities;
 
 import androidx.fragment.app.FragmentActivity;
 
@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.lab1.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -82,7 +83,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 			getIntent().putExtra("newCoords", markerOptions.getPosition().latitude + "," + markerOptions.getPosition().longitude);
 			setResult(RESULT_OK, getIntent());
 			if (toast.getView().getWindowVisibility() != View.VISIBLE) {
-				toast.setText("Новый маркер будет сохранен");
+				toast.setText("Маркер будет сохранен");
 				toast.show();
 			}
 			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, zoom));

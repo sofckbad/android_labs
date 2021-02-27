@@ -166,6 +166,40 @@
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+                android:text="change"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/change"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:visibility="gone"
+                tools:visibility="visible"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                app:elevation="0dp"
+                android:insetRight="0dp"
+                android:insetBottom="0dp"
+                android:insetTop="0dp"
+                android:insetLeft="0dp"
+                app:iconPadding="0dp" />
+
+        <TextView
+                android:text="userName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/userName"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:textColor="#E3E3E3"
+                android:linksClickable="true"
+                android:textColorLink="@color/foreground"
+                android:scrollHorizontally="false"
+                android:minLines="1"
+                android:maxLines="1"
+                android:fontFamily="monospace"
+                android:textSize="24sp"
+                android:lineSpacingExtra="8sp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

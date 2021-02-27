@@ -8,8 +8,8 @@ public class DBHelper extends SQLiteOpenHelper
 {
 	private static final String DATABASE_NAME = "users.db";
 	private static final int SCHEMA = 1;
-	static final String USERS = "users";
-	static final String DATA = "data";
+	public static final String USERS = "users";
+	public static final String DATA = "data";
 
 	public static final String COLUMN_ID = "_id";
 
@@ -21,6 +21,7 @@ public class DBHelper extends SQLiteOpenHelper
 	public static final String COLUMN_MUSIC = "audio";
 	public static final String COLUMN_TEXT = "text";
 	public static final String COLUMN_COORDINATES = "coordinates";
+	public static final String COLUMN_USER_ID = "user_id";
 
 	public DBHelper(Context context) {
 		super(context, DATABASE_NAME, null, SCHEMA);
@@ -35,7 +36,8 @@ public class DBHelper extends SQLiteOpenHelper
 
 		db.execSQL("CREATE TABLE IF NOT EXISTS " + DATA + " (" + COLUMN_ID
 				+ " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_HEADER + " TEXT," + COLUMN_IMAGE
-				+ " TEXT, " + COLUMN_MUSIC + " TEXT, " + COLUMN_TEXT + " TEXT, " + COLUMN_COORDINATES + " TEXT);");
+				+ " TEXT, " + COLUMN_MUSIC + " TEXT, " + COLUMN_TEXT + " TEXT, " + COLUMN_COORDINATES + " TEXT, "+COLUMN_USER_ID+" INTEGER, FOREIGN KEY(" +
+				COLUMN_USER_ID + ") REFERENCES "+USERS+" ("+COLUMN_ID+"));");
 
 		db.execSQL("INSERT INTO "+ USERS +" (" + COLUMN_NAME
 				+ ", " + COLUMN_PASSWORD + ") VALUES ('admin', 'admin');");
