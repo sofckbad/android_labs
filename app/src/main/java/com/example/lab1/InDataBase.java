@@ -21,6 +21,7 @@ public class InDataBase implements dataInterface {
 				.append(DBHelper.DATA).append(".").append(DBHelper.COLUMN_MUSIC).append(", ")
 				.append(DBHelper.DATA).append(".").append(DBHelper.COLUMN_TEXT).append(", ")
 				.append(DBHelper.DATA).append(".").append(DBHelper.COLUMN_COORDINATES).append(", ")
+				.append(DBHelper.DATA).append(".").append(DBHelper.COLUMN_DATE).append(", ")
 				.append(DBHelper.USERS).append(".").append(DBHelper.COLUMN_NAME)
 				.append(" from ")
 				.append(DBHelper.DATA)
@@ -32,21 +33,17 @@ public class InDataBase implements dataInterface {
 				.append(DBHelper.USERS).append(".").append(DBHelper.COLUMN_ID)
 				.toString(), null);
 
-		if (Main.mediaArray.size() != 0) Main.mediaArray.clear();
-		if (Main.coordinatesArray.size() != 0) Main.coordinatesArray.clear();
-		if (Main.headerArray.size() != 0) Main.headerArray.clear();
-		if (Main.textArray.size() != 0) Main.textArray.clear();
-		if (Main.imageArray.size() != 0) Main.imageArray.clear();
-		if (Main.nameArray.size() != 0) Main.nameArray.clear();
+		if (Main.data.size() != 0) Main.data.clear();
 
 		userCursor.moveToFirst();
 		while (! userCursor.isAfterLast()) {
-			Main.headerArray.add(userCursor.getString(0));
-			Main.imageArray.add(userCursor.getString(1));
-			Main.mediaArray.add(userCursor.getString(2));
-			Main.textArray.add(userCursor.getString(3));
-			Main.coordinatesArray.add(userCursor.getString(4));
-			Main.nameArray.add(userCursor.getString(5));
+			Main.data.add(new Bean(userCursor.getString(2),
+					userCursor.getString(3),
+					userCursor.getString(0),
+					userCursor.getString(1),
+					userCursor.getString(4),
+					userCursor.getString(6),
+					userCursor.getString(5)));
 			userCursor.moveToNext();
 		}
 
@@ -58,7 +55,16 @@ public class InDataBase implements dataInterface {
 	public void intoDB(String header, String image, String audio, String text, String coordinates) {
 		if (image == null || audio == null || text == null) return;
 		SQLiteDatabase db = (new DBHelper(Main.activity)).getWritableDatabase();
-		db.execSQL("INSERT INTO " + DBHelper.DATA + " (" + DBHelper.COLUMN_HEADER + ", " + DBHelper.COLUMN_IMAGE + ", " + DBHelper.COLUMN_MUSIC + ", " + DBHelper.COLUMN_TEXT + ", " + DBHelper.COLUMN_COORDINATES + ", " + DBHelper.COLUMN_USER_ID + ") VALUES (?, ?, ?, ?, ?, ?)", new Object[] { header, image, audio, text, coordinates, Main.idCurrentUser });
+		db.execSQL(new StringBuilder()
+				.append("INSERT INTO ").append(DBHelper.DATA).append(" (")
+				.append(DBHelper.COLUMN_HEADER).append(", ")
+				.append(DBHelper.COLUMN_IMAGE).append(", ")
+				.append(DBHelper.COLUMN_MUSIC).append(", ")
+				.append(DBHelper.COLUMN_TEXT).append(", ")
+				.append(DBHelper.COLUMN_COORDINATES).append(", ")
+				.append(DBHelper.COLUMN_USER_ID).append(", ")
+				.append(DBHelper.COLUMN_DATE)
+				.append(") VALUES (?, ?, ?, ?, ?, ?, datetime('now'))").toString(), new Object[] { header, image, audio, text, coordinates, Main.idCurrentUser });
 
 		Main.activity.recyclerFragment.recyclerAdapter.addItem();
 
@@ -66,12 +72,16 @@ public class InDataBase implements dataInterface {
 		if (Main.activity.mainToast.getView().getWindowVisibility() != View.VISIBLE)
 			Main.activity.mainToast.show();
 
-		Main.headerArray.add(header);
-		Main.imageArray.add(image);
-		Main.mediaArray.add(audio);
-		Main.textArray.add(text);
-		Main.coordinatesArray.add(coordinates);
-		Main.nameArray.add(Main.curName);
+		Cursor cursor = db.rawQuery( "select datetime('now')", null);
+
+		cursor.moveToFirst();
+		Main.data.add(new Bean(audio,
+				text,
+				header,
+				image,
+				coordinates,
+				Main.curName,
+				cursor.getString(0)));
 
 		Main.activity.recyclerFragment.recyclerAdapter.add(1);
 
@@ -87,7 +97,7 @@ public class InDataBase implements dataInterface {
 	@Override
 	public void removeItemAt(int adapterPosition) {
 		SQLiteDatabase db = (new DBHelper(Main.application)).getWritableDatabase();
-		db.execSQL("DELETE FROM " + DBHelper.DATA + " WHERE " + DBHelper.COLUMN_HEADER + " = ? AND " + DBHelper.COLUMN_IMAGE + " = ? AND " + DBHelper.COLUMN_MUSIC + " = ? AND " + DBHelper.COLUMN_TEXT + " = ?", new Object[] { Main.headerArray.get(adapterPosition), Main.imageArray.get(adapterPosition), Main.mediaArray.get(adapterPosition), Main.textArray.get(adapterPosition) });
+		db.execSQL("DELETE FROM " + DBHelper.DATA + " WHERE " + DBHelper.COLUMN_HEADER + " = ? AND " + DBHelper.COLUMN_IMAGE + " = ? AND " + DBHelper.COLUMN_MUSIC + " = ? AND " + DBHelper.COLUMN_TEXT + " = ?", new Object[] { Main.data.get(adapterPosition).header, Main.data.get(adapterPosition).image, Main.data.get(adapterPosition).media, Main.data.get(adapterPosition).text });
 
 		Main.activity.mainToast.setText("Удалено");
 		if (Main.activity.mainToast.getView().getWindowVisibility() != View.VISIBLE)
@@ -101,12 +111,7 @@ public class InDataBase implements dataInterface {
 			Main.numWhoPlaying = - 1;
 		}
 
-		Main.headerArray.remove(adapterPosition);
-		Main.imageArray.remove(adapterPosition);
-		Main.mediaArray.remove(adapterPosition);
-		Main.textArray.remove(adapterPosition);
-		Main.coordinatesArray.remove(adapterPosition);
-		Main.nameArray.remove(adapterPosition);
+		Main.data.remove(adapterPosition);
 
 		db.close();
 	}

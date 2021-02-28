@@ -1,5 +1,6 @@
 package com.example.lab1.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.lab1.R;
 import com.example.lab1.RecyclerAdapter;
 import com.example.lab1.activities.Main;
+import com.example.lab1.activities.SortActivity;
 
 public class RecyclerFragment extends Fragment {
 
@@ -88,6 +90,12 @@ public class RecyclerFragment extends Fragment {
 		});
 		itemTouchHelper.attachToRecyclerView(recyclerView);
 
-		recyclerAdapter.setCountOfElement(Main.mediaArray.size());
+		recyclerAdapter.setCountOfElement(Main.data.size());
+
+		getActivity().findViewById(R.id.sortButton).setOnClickListener(v -> {
+			Intent intent = new Intent(getContext(), SortActivity.class);
+			getActivity().startActivityForResult(intent, Main.SORT_REQUEST);
+		});
 	}
+
 }

@@ -15,8 +15,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.Toast;
 
+import com.example.lab1.Bean;
 import com.example.lab1.DBHelper;
 import com.example.lab1.InDataBase;
 import com.example.lab1.fragments.Login;
@@ -37,6 +39,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+
+/*TODO
+* vk requests;
+* firebase;
+* sort;
+* */
 
 public class Main extends AppCompatActivity {
 
@@ -51,6 +60,7 @@ public class Main extends AppCompatActivity {
 	public static final int ADD_REQUEST = 3;
 	public static final int MAP_REQUEST = 4;
 	public static final int CHANGE_REQUEST = 5;
+	public static final int SORT_REQUEST = 6;
 
 	public static String header = null;
 	public static String image = null;
@@ -59,12 +69,15 @@ public class Main extends AppCompatActivity {
 	public static String coordinates = null;
 
 
-	public static ArrayList<String> mediaArray = new ArrayList<>();
-	public static ArrayList<String> textArray = new ArrayList<>();
-	public static ArrayList<String> headerArray = new ArrayList<>();
-	public static ArrayList<String> imageArray = new ArrayList<>();
-	public static ArrayList<String> coordinatesArray = new ArrayList<>();
-	public static ArrayList<String> nameArray = new ArrayList<>();
+//	public static ArrayList<String> mediaArray = new ArrayList<>();
+//	public static ArrayList<String> textArray = new ArrayList<>();
+//	public static ArrayList<String> headerArray = new ArrayList<>();
+//	public static ArrayList<String> imageArray = new ArrayList<>();
+//	public static ArrayList<String> coordinatesArray = new ArrayList<>();
+//	public static ArrayList<String> nameArray = new ArrayList<>();
+//	public static ArrayList<String> dateArray = new ArrayList<>();
+
+	public static ArrayList<Bean> data = new ArrayList<>();
 
 	public static MediaPlayer mp = null;
 	public static InDataBase dataLoader = new InDataBase();
@@ -74,6 +87,8 @@ public class Main extends AppCompatActivity {
 	public static int idCurrentUser = 1;
 	public static String curName = "admin";
 	public boolean isAdmin = true;
+
+	public boolean _isFirebase = false;
 
 	GoogleSignInClient mGoogleSignInClient;
 
@@ -172,7 +187,7 @@ public class Main extends AppCompatActivity {
 					int i = - 1;
 					i = data.getIntExtra("position", i);
 					db.execSQL("update " + DBHelper.DATA + " set " + DBHelper.COLUMN_COORDINATES + " = ? where " + DBHelper.COLUMN_COORDINATES + " = '" + data.getData().toString().split("geo:")[1] + "'", new Object[] { data.getStringExtra("newCoords") });
-					coordinatesArray.set(i, data.getStringExtra("newCoords"));
+					Main.data.get(i).coordinates = data.getStringExtra("newCoords");
 //					i = data.getIntExtra("position", -1);
 					Toast.makeText(this, "Метка сохранена", Toast.LENGTH_SHORT).show();
 					recyclerFragment.recyclerAdapter.notifyItemChanged(i);
@@ -183,17 +198,37 @@ public class Main extends AppCompatActivity {
 				if (resultCode == RESULT_OK) {
 					dataLoader.change(data);
 					int i = data.getIntExtra("position", - 1);
-					headerArray.set(i, data.getStringExtra("header"));
-					imageArray.set(i, data.getStringExtra("image"));
-					textArray.set(i, data.getStringExtra("text"));
-					mediaArray.set(i, data.getStringExtra("audio"));
-					coordinatesArray.set(i, data.getStringExtra("coordinates"));
+					Main.data.get(i).header = data.getStringExtra("header");
+					Main.data.get(i).image = data.getStringExtra("image");
+					Main.data.get(i).text = data.getStringExtra("text");
+					Main.data.get(i).media = data.getStringExtra("audio");
+					Main.data.get(i).coordinates = data.getStringExtra("coordinates");
+
+
 
 					if (numWhoPlaying == i) {
 						mp.reset();
 						numWhoPlaying = -1;
 					}
 					recyclerFragment.recyclerAdapter.notifyItemChanged(i);
+				}
+				break;
+			case SORT_REQUEST:
+				if (resultCode == RESULT_OK) {
+
+					if (data != null) {
+
+						String name = data.getStringExtra("name");
+						ArrayList<Bean> list = new ArrayList<>();
+						int i = 0;
+						for (Bean bean: Main.data) {
+							if (bean.name.equals(name) || name.equals("all")) list.add(bean);
+							i++;
+						}
+						recyclerFragment.recyclerAdapter.setCountOfElement(list.size());
+						recyclerFragment.recyclerAdapter.showSorted(list);
+					}
+					recyclerFragment.recyclerAdapter.notifyDataSetChanged();
 				}
 				break;
 		}

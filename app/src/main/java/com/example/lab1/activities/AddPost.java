@@ -66,7 +66,7 @@ public class AddPost extends AppCompatActivity {
 				if (addresses.size() == 0) throw new NumberFormatException();
 				String locality = (addresses.get(0).getLocality() == null) ? "" : addresses.get(0).getLocality();
 				String country = (addresses.get(0).getCountryName() == null) ? "" : addresses.get(0).getCountryName() + " ";
-				coordinates.setText((country + locality).equals("") ? Main.coordinatesArray.get(intent.getIntExtra("position", - 1)) : (country + locality));
+				coordinates.setText((country + locality).equals("") ? Main.data.get(intent.getIntExtra("position", - 1)).coordinates : (country + locality));
 			} catch (IOException | NumberFormatException e) {
 				e.printStackTrace();
 				coordinates.setText(intent.getStringExtra("old_coordinates"));

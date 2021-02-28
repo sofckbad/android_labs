@@ -100,4 +100,31 @@
             android:onClick="googleAuthorise"
             tools:ignore="OnClick" />
 
+    <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/base_switcher"
+            android:textColor="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+            android:text="SQLite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView"
+            app:layout_constraintEnd_toStartOf="@+id/base_switcher"
+            app:layout_constraintTop_toTopOf="@+id/base_switcher"
+            android:layout_marginTop="8dp" />
+
+    <TextView
+            android:text="firebase"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView2"
+            app:layout_constraintStart_toEndOf="@+id/base_switcher"
+            app:layout_constraintTop_toTopOf="@+id/base_switcher"
+            android:layout_marginTop="8dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -21,6 +21,7 @@ public class DBHelper extends SQLiteOpenHelper
 	public static final String COLUMN_MUSIC = "audio";
 	public static final String COLUMN_TEXT = "text";
 	public static final String COLUMN_COORDINATES = "coordinates";
+	public static final String COLUMN_DATE = "date";
 	public static final String COLUMN_USER_ID = "user_id";
 
 	public DBHelper(Context context) {
@@ -34,10 +35,27 @@ public class DBHelper extends SQLiteOpenHelper
 				+ " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_NAME
 				+ " TEXT unique, " + COLUMN_PASSWORD + " TEXT);");
 
-		db.execSQL("CREATE TABLE IF NOT EXISTS " + DATA + " (" + COLUMN_ID
-				+ " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_HEADER + " TEXT," + COLUMN_IMAGE
-				+ " TEXT, " + COLUMN_MUSIC + " TEXT, " + COLUMN_TEXT + " TEXT, " + COLUMN_COORDINATES + " TEXT, "+COLUMN_USER_ID+" INTEGER, FOREIGN KEY(" +
-				COLUMN_USER_ID + ") REFERENCES "+USERS+" ("+COLUMN_ID+"));");
+		db.execSQL(new StringBuilder()
+				.append("CREATE TABLE IF NOT EXISTS ").append(DATA).append(" (")
+				.append(COLUMN_ID)
+				.append(" INTEGER PRIMARY KEY AUTOINCREMENT, ")
+				.append(COLUMN_HEADER)
+				.append(" TEXT,")
+				.append(COLUMN_IMAGE)
+				.append(" TEXT, ")
+				.append(COLUMN_MUSIC)
+				.append(" TEXT, ")
+				.append(COLUMN_TEXT)
+				.append(" TEXT, ")
+				.append(COLUMN_COORDINATES)
+				.append(" TEXT, ")
+				.append(COLUMN_DATE)
+				.append(" TEXT, ")
+				.append(COLUMN_USER_ID)
+				.append(" INTEGER, ")
+				.append("FOREIGN KEY(").append(COLUMN_USER_ID).append(") REFERENCES ")
+				.append(USERS).append(" (").append(COLUMN_ID).append(")")
+				.append(");").toString());
 
 		db.execSQL("INSERT INTO "+ USERS +" (" + COLUMN_NAME
 				+ ", " + COLUMN_PASSWORD + ") VALUES ('admin', 'admin');");

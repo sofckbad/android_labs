@@ -18,6 +18,7 @@ import com.example.lab1.activities.AddPost;
 import com.example.lab1.activities.Main;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -32,6 +33,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 		this.countOfElement = countOfElement;
 	}
 	public void add(int add) {countOfElement += add;}
+	private ArrayList<Bean> dataLink = Main.data;
 
 	@NonNull
 	@Override
@@ -43,10 +45,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 	@Override
 	public void onBindViewHolder(@NonNull RecyclerHolder holder, int position) {
 //		holder.image_content.setImageBitmap(MediaStore.Images.Media.getBitmap(getContentResolver(),Uri.parse(Main.imageArray.get(position))));
-		holder.image_content.setImageURI(Uri.parse(Main.imageArray.get(holder.getAdapterPosition())));
-		holder.text_content.setText(Main.textArray.get(holder.getAdapterPosition()));
-		holder.header_content.setText(Main.headerArray.get(holder.getAdapterPosition()));
-		holder.user_name.setText(Main.nameArray.get(holder.getAdapterPosition()));
+		Bean data = dataLink.get(holder.getAdapterPosition());
+		holder.image_content.setImageURI(Uri.parse(data.image));
+		holder.text_content.setText(data.text);
+		holder.header_content.setText(data.header);
+		holder.user_name.setText(data.name);
 		if (holder.getAdapterPosition() == Main.numWhoPlaying) {
 			holder.seekBar.setVisibility(View.VISIBLE);
 			holder.seekBar.setMax(Main.mp.getDuration());
@@ -54,18 +57,18 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 			Main.currentSeekBar = holder.seekBar;
 		}
 
-		String[] coords = Main.coordinatesArray.get(holder.getAdapterPosition()).split(",");
+		String[] coords = dataLink.get(holder.getAdapterPosition()).coordinates.split(",");
 
 		if (Main.activity.isAdmin) {
 			holder.change.setVisibility(View.VISIBLE);
 			holder.change.setOnClickListener(v -> {
 				Intent intent = new Intent(Main.activity, AddPost.class);
 				intent.putExtra("position", holder.getAdapterPosition());
-				intent.putExtra("old_image", Main.imageArray.get(holder.getAdapterPosition()));
-				intent.putExtra("old_audio", Main.mediaArray.get(holder.getAdapterPosition()));
-				intent.putExtra("old_text", Main.textArray.get(holder.getAdapterPosition()));
-				intent.putExtra("old_header", Main.headerArray.get(holder.getAdapterPosition()));
-				intent.putExtra("old_coordinates", Main.coordinatesArray.get(holder.getAdapterPosition()));
+				intent.putExtra("old_image", data.image);
+				intent.putExtra("old_audio", data.media);
+				intent.putExtra("old_text", data.text);
+				intent.putExtra("old_header", data.header);
+				intent.putExtra("old_coordinates", data.coordinates);
 				Main.activity.startActivityForResult(intent, Main.CHANGE_REQUEST);
 			});
 		}
@@ -77,13 +80,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 			if (addresses.size() == 0) throw new NumberFormatException();
 			String locality = (addresses.get(0).getLocality() == null)?"":addresses.get(0).getLocality();
 			String country = (addresses.get(0).getCountryName() == null)?"":addresses.get(0).getCountryName()+" ";
-			holder.address_content.setText((country + locality).equals("")?Main.coordinatesArray.get(holder.getAdapterPosition()):(country + locality));
+			holder.address_content.setText((country + locality).equals("")?data.coordinates:(country + locality));
 		} catch (IOException | NumberFormatException e) {
 			e.printStackTrace();
-			holder.address_content.setText(Main.coordinatesArray.get(holder.getAdapterPosition()));
+			holder.address_content.setText(data.coordinates);
 		}
 		holder.address_content.setOnClickListener(v -> {
-			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:"+Main.coordinatesArray.get(holder.getAdapterPosition())));
+			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:"+data.coordinates));
 			intent.putExtra("position", holder.getAdapterPosition());
 			Main.activity.startActivityForResult(intent, Main.MAP_REQUEST);
 		});
@@ -91,8 +94,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 			try {
 				if (holder.getAdapterPosition() != Main.numWhoPlaying){
 					Main.mp.reset();
-//					Main.mediaArray.get(holder.getAdapterPosition()).split("%3A")[1]
-					Matcher m = Pattern.compile("\\d*$").matcher(Main.mediaArray.get(holder.getAdapterPosition()));
+//					data.media.split("%3A")[1]
+					Matcher m = Pattern.compile("\\d*$").matcher(data.media);
 					m.find();
 					int i = Integer.parseInt(m.group());
 					Main.mp.setDataSource(Main.application, ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, i));
@@ -135,5 +138,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 
 	public void addItem() {
 		notifyItemRangeInserted(countOfElement, 1);
+	}
+
+	public void showSorted(ArrayList<Bean> arrayList) {
+		dataLink = arrayList;
 	}
 }

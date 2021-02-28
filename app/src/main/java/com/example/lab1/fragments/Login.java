@@ -1,5 +1,6 @@
 package com.example.lab1.fragments;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.database.Cursor;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.lab1.DBHelper;
@@ -59,6 +61,14 @@ public class Login extends Fragment {
 			db.close();
 			userCursor.close();
 		}
+	}
+
+	@Override
+	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		Main.activity.findViewById(R.id.base_switcher).setOnClickListener(v -> {
+			Main.activity._isFirebase = ((Switch) v).isChecked();
+		});
 	}
 
 	public void signUp() {
