@@ -77,6 +77,7 @@ public class Main extends AppCompatActivity {
 	public static int idCurrentUser = 1;
 	public static String curName = "admin";
 	public boolean isAdmin = true;
+	public boolean isSorted = false;
 
 	public static boolean _isFirebase = false;
 
@@ -160,10 +161,8 @@ public class Main extends AppCompatActivity {
 					dataLoader.intoDB(header, image, audio, text, coordinates);}
 				recyclerFragment.recyclerAdapter.showSorted(Main.data);
 				recyclerFragment.recyclerAdapter.notifyDataSetChanged();
-				System.out.println("----------q"+Main.data.size());
 				break;
 			case REGISTRATION_REQUEST:
-				System.out.println("--------regRec " + resultCode);
 				if (resultCode == RESULT_OK) {
 					switchFragment(R.id.main_content, recyclerFragment);
 					mainToast.setText("Account was created");
@@ -218,6 +217,7 @@ public class Main extends AppCompatActivity {
 						}
 						recyclerFragment.recyclerAdapter.showSorted(list);
 					}
+					isSorted = true;
 					recyclerFragment.recyclerAdapter.notifyDataSetChanged();
 				}
 				break;

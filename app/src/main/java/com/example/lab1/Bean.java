@@ -1,11 +1,13 @@
 package com.example.lab1;
 
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.io.Serializable;
 
 @IgnoreExtraProperties
 public class Bean {
+	public String  link;
 	public String media;
 	public String text;
 	public String header;

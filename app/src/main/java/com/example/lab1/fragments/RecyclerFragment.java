@@ -97,14 +97,9 @@ public class RecyclerFragment extends Fragment {
 			Intent intent = new Intent(getContext(), SortActivity.class);
 			getActivity().startActivityForResult(intent, Main.SORT_REQUEST);
 		});
-	}
 
-	@Override
-	public void onStart() {
-		super.onStart();
 		Main.dataLoader.fromDB();
 		recyclerAdapter.setCountOfElement(recyclerAdapter.dataLink.size());
-		System.out.println("----------*"+recyclerAdapter.dataLink.size());
 		recyclerAdapter.notifyDataSetChanged();
 	}
 }

@@ -18,6 +18,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class InDataBase implements dataInterface {
 
@@ -44,10 +46,11 @@ public class InDataBase implements dataInterface {
 			ValueEventListener valueEventListener = new ValueEventListener() {
 				@Override
 				public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-					Toast.makeText(Main.activity, "loading", Toast.LENGTH_SHORT).show();
+					Main.activity.isSorted =false;
 					if (Main.data.size() > 0) Main.data.clear();
-					for (DataSnapshot ds: dataSnapshot.getChildren()) {
+					for (DataSnapshot ds : dataSnapshot.getChildren()) {
 						Bean bean = ds.getValue(Bean.class);
+						bean.link = ds.getKey();
 						Main.data.add(bean);
 					}
 					Main.activity.recyclerFragment.recyclerAdapter.countOfElement = Main.activity.recyclerFragment.recyclerAdapter.dataLink.size();
@@ -86,6 +89,7 @@ public class InDataBase implements dataInterface {
 			Bean bean = new Bean(audio, text, header, image, coordinates, Main.curName, f.format(new Date()));
 			Main.data.add(bean);
 			myRef.push().setValue(bean);
+			bean.link = myRef.getKey();
 			System.out.println("-----------"+Main.data.size());
 		}
 
@@ -111,7 +115,7 @@ public class InDataBase implements dataInterface {
 			db.execSQL("DELETE FROM " + DBHelper.DATA + " WHERE " + DBHelper.COLUMN_HEADER + " = ? AND " + DBHelper.COLUMN_IMAGE + " = ? AND " + DBHelper.COLUMN_MUSIC + " = ? AND " + DBHelper.COLUMN_TEXT + " = ?", new Object[] { Main.data.get(adapterPosition).header, Main.data.get(adapterPosition).image, Main.data.get(adapterPosition).media, Main.data.get(adapterPosition).text });
 			db.close();
 		} else {
-
+			FirebaseDatabase.getInstance().getReference("items").child(Main.data.get(adapterPosition).link).removeValue();
 		}
 
 		Main.activity.mainToast.setText("Удалено");
@@ -137,7 +141,19 @@ public class InDataBase implements dataInterface {
 			SQLiteDatabase db = (new DBHelper(Main.application)).getWritableDatabase();
 			db.execSQL(new StringBuilder().append("UPDATE ").append(DBHelper.DATA).append(" SET ").append(DBHelper.COLUMN_HEADER).append(" = '").append(data.getStringExtra("header")).append("',").append(" ").append(DBHelper.COLUMN_IMAGE).append(" = '").append(data.getStringExtra("image")).append("',").append(" ").append(DBHelper.COLUMN_TEXT).append(" = '").append(data.getStringExtra("text")).append("',").append(" ").append(DBHelper.COLUMN_MUSIC).append(" = '").append(data.getStringExtra("audio")).append("',").append(" ").append(DBHelper.COLUMN_COORDINATES).append(" = '").append(data.getStringExtra("coordinates")).append("'").append(" WHERE ").append(DBHelper.COLUMN_HEADER).append(" = '").append(data.getStringExtra("old_header")).append("' and ").append(DBHelper.COLUMN_IMAGE).append(" = '").append(data.getStringExtra("old_image")).append("' and ").append(DBHelper.COLUMN_TEXT).append(" = '").append(data.getStringExtra("old_text")).append("' and ").append(DBHelper.COLUMN_MUSIC).append(" = '").append(data.getStringExtra("old_audio")).append("' and ").append(DBHelper.COLUMN_COORDINATES).append(" = '").append(data.getStringExtra("old_coordinates")).append("'").toString(), new Object[] { });
 		} else {
+			int i = data.getIntExtra("position", -1);
+			Map<String, Object> map = new HashMap<>();
+			map.put("header", data.getStringExtra("header"));
+			map.put("image", data.getStringExtra("image"));
+			map.put("text", data.getStringExtra("text"));
+			map.put("media", data.getStringExtra("audio"));
+			map.put("coordinates", data.getStringExtra("coordinates"));
 
+			FirebaseDatabase database = FirebaseDatabase.getInstance();
+			DatabaseReference myRef = database.getReference("items").child(Main.data.get(i).link);
+			myRef.updateChildren(map, (databaseError, databaseReference) -> {
+				if (databaseError != null) Toast.makeText(Main.activity, "problems with change", Toast.LENGTH_SHORT).show();
+			});
 		}
 	}
 }
