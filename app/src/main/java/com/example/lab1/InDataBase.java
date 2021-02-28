@@ -4,86 +4,97 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.View;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import com.example.lab1.activities.Main;
 import com.example.lab1.interfaces.dataInterface;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class InDataBase implements dataInterface {
 
 	@Override
 	public void fromDB() {
-		SQLiteDatabase db = (new DBHelper(Main.activity)).getWritableDatabase();
-		Cursor userCursor;
-		userCursor = db.rawQuery(new StringBuilder()
-				.append("select ")
-				.append(DBHelper.DATA).append(".").append(DBHelper.COLUMN_HEADER).append(", ")
-				.append(DBHelper.DATA).append(".").append(DBHelper.COLUMN_IMAGE).append(", ")
-				.append(DBHelper.DATA).append(".").append(DBHelper.COLUMN_MUSIC).append(", ")
-				.append(DBHelper.DATA).append(".").append(DBHelper.COLUMN_TEXT).append(", ")
-				.append(DBHelper.DATA).append(".").append(DBHelper.COLUMN_COORDINATES).append(", ")
-				.append(DBHelper.DATA).append(".").append(DBHelper.COLUMN_DATE).append(", ")
-				.append(DBHelper.USERS).append(".").append(DBHelper.COLUMN_NAME)
-				.append(" from ")
-				.append(DBHelper.DATA)
-				.append(" INNER JOIN ")
-				.append(DBHelper.USERS)
-				.append(" ON ")
-				.append(DBHelper.DATA).append(".").append(DBHelper.COLUMN_USER_ID)
-				.append(" = ")
-				.append(DBHelper.USERS).append(".").append(DBHelper.COLUMN_ID)
-				.toString(), null);
+		if (Main.data.size() != 0) { Main.data.clear();}
 
-		if (Main.data.size() != 0) Main.data.clear();
+		if (!Main._isFirebase) {
+			SQLiteDatabase db = (new DBHelper(Main.activity)).getWritableDatabase();
+			Cursor userCursor;
+			userCursor = db.rawQuery(new StringBuilder().append("select ").append(DBHelper.DATA).append(".").append(DBHelper.COLUMN_HEADER).append(", ").append(DBHelper.DATA).append(".").append(DBHelper.COLUMN_IMAGE).append(", ").append(DBHelper.DATA).append(".").append(DBHelper.COLUMN_MUSIC).append(", ").append(DBHelper.DATA).append(".").append(DBHelper.COLUMN_TEXT).append(", ").append(DBHelper.DATA).append(".").append(DBHelper.COLUMN_COORDINATES).append(", ").append(DBHelper.DATA).append(".").append(DBHelper.COLUMN_DATE).append(", ").append(DBHelper.USERS).append(".").append(DBHelper.COLUMN_NAME).append(" from ").append(DBHelper.DATA).append(" INNER JOIN ").append(DBHelper.USERS).append(" ON ").append(DBHelper.DATA).append(".").append(DBHelper.COLUMN_USER_ID).append(" = ").append(DBHelper.USERS).append(".").append(DBHelper.COLUMN_ID).toString(), null);
 
-		userCursor.moveToFirst();
-		while (! userCursor.isAfterLast()) {
-			Main.data.add(new Bean(userCursor.getString(2),
-					userCursor.getString(3),
-					userCursor.getString(0),
-					userCursor.getString(1),
-					userCursor.getString(4),
-					userCursor.getString(6),
-					userCursor.getString(5)));
-			userCursor.moveToNext();
+
+			userCursor.moveToFirst();
+			while (! userCursor.isAfterLast()) {
+				Main.data.add(new Bean(userCursor.getString(2), userCursor.getString(3), userCursor.getString(0), userCursor.getString(1), userCursor.getString(4), userCursor.getString(6), userCursor.getString(5)));
+				userCursor.moveToNext();
+			}
+
+			db.close();
+			userCursor.close();
+		} else {
+			DatabaseReference database = FirebaseDatabase.getInstance().getReference("items");
+			ValueEventListener valueEventListener = new ValueEventListener() {
+				@Override
+				public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+					Toast.makeText(Main.activity, "loading", Toast.LENGTH_SHORT).show();
+					if (Main.data.size() > 0) Main.data.clear();
+					for (DataSnapshot ds: dataSnapshot.getChildren()) {
+						Bean bean = ds.getValue(Bean.class);
+						Main.data.add(bean);
+					}
+					Main.activity.recyclerFragment.recyclerAdapter.countOfElement = Main.activity.recyclerFragment.recyclerAdapter.dataLink.size();
+					Main.activity.recyclerFragment.recyclerAdapter.notifyDataSetChanged();
+				}
+
+				@Override
+				public void onCancelled(@NonNull DatabaseError databaseError) {
+
+				}
+			};
+			database.addValueEventListener(valueEventListener);
 		}
-
-		db.close();
-		userCursor.close();
 	}
 
 	@Override
 	public void intoDB(String header, String image, String audio, String text, String coordinates) {
 		if (image == null || audio == null || text == null) return;
-		SQLiteDatabase db = (new DBHelper(Main.activity)).getWritableDatabase();
-		db.execSQL(new StringBuilder()
-				.append("INSERT INTO ").append(DBHelper.DATA).append(" (")
-				.append(DBHelper.COLUMN_HEADER).append(", ")
-				.append(DBHelper.COLUMN_IMAGE).append(", ")
-				.append(DBHelper.COLUMN_MUSIC).append(", ")
-				.append(DBHelper.COLUMN_TEXT).append(", ")
-				.append(DBHelper.COLUMN_COORDINATES).append(", ")
-				.append(DBHelper.COLUMN_USER_ID).append(", ")
-				.append(DBHelper.COLUMN_DATE)
-				.append(") VALUES (?, ?, ?, ?, ?, ?, datetime('now'))").toString(), new Object[] { header, image, audio, text, coordinates, Main.idCurrentUser });
+		if (!Main._isFirebase) {
+			SQLiteDatabase db = (new DBHelper(Main.activity)).getWritableDatabase();
+			db.execSQL(new StringBuilder().append("INSERT INTO ").append(DBHelper.DATA).append(" (").append(DBHelper.COLUMN_HEADER).append(", ").append(DBHelper.COLUMN_IMAGE).append(", ").append(DBHelper.COLUMN_MUSIC).append(", ").append(DBHelper.COLUMN_TEXT).append(", ").append(DBHelper.COLUMN_COORDINATES).append(", ").append(DBHelper.COLUMN_USER_ID).append(", ").append(DBHelper.COLUMN_DATE).append(") VALUES (?, ?, ?, ?, ?, ?, datetime('now'))").toString(), new Object[] { header, image, audio, text, coordinates, Main.idCurrentUser });
 
+
+			Cursor cursor = db.rawQuery("select datetime('now')", null);
+
+			cursor.moveToFirst();
+			Bean bean = new Bean(audio, text, header, image, coordinates, Main.curName, cursor.getString(0));
+			Main.data.add(bean);
+
+			cursor.close();
+			db.close();
+		} else {
+			FirebaseDatabase database = FirebaseDatabase.getInstance();
+			DatabaseReference myRef = database.getReference("items");
+			SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Bean bean = new Bean(audio, text, header, image, coordinates, Main.curName, f.format(new Date()));
+			Main.data.add(bean);
+			myRef.push().setValue(bean);
+			System.out.println("-----------"+Main.data.size());
+		}
+
+		Main.activity.recyclerFragment.recyclerAdapter.add(1);
 		Main.activity.recyclerFragment.recyclerAdapter.addItem();
 
 		Main.activity.mainToast.setText("Пост добавлен");
 		if (Main.activity.mainToast.getView().getWindowVisibility() != View.VISIBLE)
 			Main.activity.mainToast.show();
-
-		Cursor cursor = db.rawQuery( "select datetime('now')", null);
-
-		cursor.moveToFirst();
-		Main.data.add(new Bean(audio,
-				text,
-				header,
-				image,
-				coordinates,
-				Main.curName,
-				cursor.getString(0)));
-
-		Main.activity.recyclerFragment.recyclerAdapter.add(1);
 
 		Main.header = null;
 		Main.image = null;
@@ -91,17 +102,22 @@ public class InDataBase implements dataInterface {
 		Main.text = null;
 		Main.coordinates = null;
 
-		db.close();
 	}
 
 	@Override
 	public void removeItemAt(int adapterPosition) {
-		SQLiteDatabase db = (new DBHelper(Main.application)).getWritableDatabase();
-		db.execSQL("DELETE FROM " + DBHelper.DATA + " WHERE " + DBHelper.COLUMN_HEADER + " = ? AND " + DBHelper.COLUMN_IMAGE + " = ? AND " + DBHelper.COLUMN_MUSIC + " = ? AND " + DBHelper.COLUMN_TEXT + " = ?", new Object[] { Main.data.get(adapterPosition).header, Main.data.get(adapterPosition).image, Main.data.get(adapterPosition).media, Main.data.get(adapterPosition).text });
+		if (!Main._isFirebase) {
+			SQLiteDatabase db = (new DBHelper(Main.application)).getWritableDatabase();
+			db.execSQL("DELETE FROM " + DBHelper.DATA + " WHERE " + DBHelper.COLUMN_HEADER + " = ? AND " + DBHelper.COLUMN_IMAGE + " = ? AND " + DBHelper.COLUMN_MUSIC + " = ? AND " + DBHelper.COLUMN_TEXT + " = ?", new Object[] { Main.data.get(adapterPosition).header, Main.data.get(adapterPosition).image, Main.data.get(adapterPosition).media, Main.data.get(adapterPosition).text });
+			db.close();
+		} else {
+
+		}
 
 		Main.activity.mainToast.setText("Удалено");
-		if (Main.activity.mainToast.getView().getWindowVisibility() != View.VISIBLE)
+		if (Main.activity.mainToast.getView().getWindowVisibility() != View.VISIBLE) {
 			Main.activity.mainToast.show();
+		}
 
 		Main.activity.recyclerFragment.recyclerAdapter.notifyItemRangeRemoved(adapterPosition, 1);
 
@@ -113,28 +129,15 @@ public class InDataBase implements dataInterface {
 
 		Main.data.remove(adapterPosition);
 
-		db.close();
 	}
 
 	@Override
 	public void change(Intent data) {
-		SQLiteDatabase db = (new DBHelper(Main.application)).getWritableDatabase();
-		db.execSQL(new StringBuilder()
-				.append("UPDATE ")
-				.append(DBHelper.DATA)
-				.append(" SET ")
-				.append(DBHelper.COLUMN_HEADER).append(" = '").append(data.getStringExtra("header")).append("',").append(" ")
-				.append(DBHelper.COLUMN_IMAGE).append(" = '").append(data.getStringExtra("image")).append("',").append(" ")
-				.append(DBHelper.COLUMN_TEXT).append(" = '").append(data.getStringExtra("text")).append("',").append(" ")
-				.append(DBHelper.COLUMN_MUSIC).append(" = '").append(data.getStringExtra("audio")).append("',").append(" ")
-				.append(DBHelper.COLUMN_COORDINATES).append(" = '").append(data.getStringExtra("coordinates")).append("'")
-				.append(" WHERE ")
-				.append(DBHelper.COLUMN_HEADER).append(" = '").append(data.getStringExtra("old_header")).append("' and ")
-				.append(DBHelper.COLUMN_IMAGE).append(" = '").append(data.getStringExtra("old_image")).append("' and ")
-				.append(DBHelper.COLUMN_TEXT).append(" = '").append(data.getStringExtra("old_text")).append("' and ")
-				.append(DBHelper.COLUMN_MUSIC).append(" = '").append(data.getStringExtra("old_audio")).append("' and ")
-				.append(DBHelper.COLUMN_COORDINATES).append(" = '").append(data.getStringExtra("old_coordinates")).append("'")
-				.toString(), new Object[]{});
+		if (!Main._isFirebase) {
+			SQLiteDatabase db = (new DBHelper(Main.application)).getWritableDatabase();
+			db.execSQL(new StringBuilder().append("UPDATE ").append(DBHelper.DATA).append(" SET ").append(DBHelper.COLUMN_HEADER).append(" = '").append(data.getStringExtra("header")).append("',").append(" ").append(DBHelper.COLUMN_IMAGE).append(" = '").append(data.getStringExtra("image")).append("',").append(" ").append(DBHelper.COLUMN_TEXT).append(" = '").append(data.getStringExtra("text")).append("',").append(" ").append(DBHelper.COLUMN_MUSIC).append(" = '").append(data.getStringExtra("audio")).append("',").append(" ").append(DBHelper.COLUMN_COORDINATES).append(" = '").append(data.getStringExtra("coordinates")).append("'").append(" WHERE ").append(DBHelper.COLUMN_HEADER).append(" = '").append(data.getStringExtra("old_header")).append("' and ").append(DBHelper.COLUMN_IMAGE).append(" = '").append(data.getStringExtra("old_image")).append("' and ").append(DBHelper.COLUMN_TEXT).append(" = '").append(data.getStringExtra("old_text")).append("' and ").append(DBHelper.COLUMN_MUSIC).append(" = '").append(data.getStringExtra("old_audio")).append("' and ").append(DBHelper.COLUMN_COORDINATES).append(" = '").append(data.getStringExtra("old_coordinates")).append("'").toString(), new Object[] { });
+		} else {
 
+		}
 	}
 }

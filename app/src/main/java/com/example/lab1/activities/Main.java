@@ -44,7 +44,6 @@ import java.util.HashMap;
 /*TODO
 * vk requests;
 * firebase;
-* sort;
 * */
 
 public class Main extends AppCompatActivity {
@@ -68,15 +67,6 @@ public class Main extends AppCompatActivity {
 	public static String text = null;
 	public static String coordinates = null;
 
-
-//	public static ArrayList<String> mediaArray = new ArrayList<>();
-//	public static ArrayList<String> textArray = new ArrayList<>();
-//	public static ArrayList<String> headerArray = new ArrayList<>();
-//	public static ArrayList<String> imageArray = new ArrayList<>();
-//	public static ArrayList<String> coordinatesArray = new ArrayList<>();
-//	public static ArrayList<String> nameArray = new ArrayList<>();
-//	public static ArrayList<String> dateArray = new ArrayList<>();
-
 	public static ArrayList<Bean> data = new ArrayList<>();
 
 	public static MediaPlayer mp = null;
@@ -88,7 +78,7 @@ public class Main extends AppCompatActivity {
 	public static String curName = "admin";
 	public boolean isAdmin = true;
 
-	public boolean _isFirebase = false;
+	public static boolean _isFirebase = false;
 
 	GoogleSignInClient mGoogleSignInClient;
 
@@ -116,7 +106,6 @@ public class Main extends AppCompatActivity {
 
 		mp = new MediaPlayer();
 
-		dataLoader.fromDB();
 
 		Thread t = new Thread() {
 			@Override
@@ -140,7 +129,6 @@ public class Main extends AppCompatActivity {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
 			case VK_REQUEST:
-				//TODO auth token vk
 				VK.onActivityResult(requestCode, resultCode, data, new VKAuthCallback() {
 					@Override
 					public void onLogin(@NotNull VKAccessToken vkAccessToken) { switchFragment(R.id.main_content, recyclerFragment); }
@@ -169,10 +157,13 @@ public class Main extends AppCompatActivity {
 					audio = data.getStringExtra("audio");
 					text = data.getStringExtra("text");
 					coordinates = data.getStringExtra("coordinates");
-					dataLoader.intoDB(header, image, audio, text, coordinates);
-				}
+					dataLoader.intoDB(header, image, audio, text, coordinates);}
+				recyclerFragment.recyclerAdapter.showSorted(Main.data);
+				recyclerFragment.recyclerAdapter.notifyDataSetChanged();
+				System.out.println("----------q"+Main.data.size());
 				break;
 			case REGISTRATION_REQUEST:
+				System.out.println("--------regRec " + resultCode);
 				if (resultCode == RESULT_OK) {
 					switchFragment(R.id.main_content, recyclerFragment);
 					mainToast.setText("Account was created");
@@ -225,7 +216,6 @@ public class Main extends AppCompatActivity {
 							if (bean.name.equals(name) || name.equals("all")) list.add(bean);
 							i++;
 						}
-						recyclerFragment.recyclerAdapter.setCountOfElement(list.size());
 						recyclerFragment.recyclerAdapter.showSorted(list);
 					}
 					recyclerFragment.recyclerAdapter.notifyDataSetChanged();

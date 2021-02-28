@@ -20,6 +20,7 @@ import com.example.lab1.R;
 import com.example.lab1.RecyclerAdapter;
 import com.example.lab1.activities.Main;
 import com.example.lab1.activities.SortActivity;
+import com.google.firebase.database.IgnoreExtraProperties;
 
 public class RecyclerFragment extends Fragment {
 
@@ -90,7 +91,7 @@ public class RecyclerFragment extends Fragment {
 		});
 		itemTouchHelper.attachToRecyclerView(recyclerView);
 
-		recyclerAdapter.setCountOfElement(Main.data.size());
+		recyclerAdapter.setCountOfElement(recyclerAdapter.dataLink.size());
 
 		getActivity().findViewById(R.id.sortButton).setOnClickListener(v -> {
 			Intent intent = new Intent(getContext(), SortActivity.class);
@@ -98,4 +99,12 @@ public class RecyclerFragment extends Fragment {
 		});
 	}
 
+	@Override
+	public void onStart() {
+		super.onStart();
+		Main.dataLoader.fromDB();
+		recyclerAdapter.setCountOfElement(recyclerAdapter.dataLink.size());
+		System.out.println("----------*"+recyclerAdapter.dataLink.size());
+		recyclerAdapter.notifyDataSetChanged();
+	}
 }

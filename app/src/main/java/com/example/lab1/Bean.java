@@ -1,5 +1,10 @@
 package com.example.lab1;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
+import java.io.Serializable;
+
+@IgnoreExtraProperties
 public class Bean {
 	public String media;
 	public String text;
@@ -17,4 +22,5 @@ public class Bean {
 		this.name = name;
 		this.date = date;
 	}
+	public Bean() {};
 }

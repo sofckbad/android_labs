@@ -97,7 +97,7 @@ public class Register extends Fragment {
 			intent.putExtra("table", DBHelper.USERS);
 			intent.putExtra("email", email);
 			intent.putExtra("password", password);
-			startActivityForResult(intent, Main.REGISTRATION_REQUEST);
+			getActivity().startActivityForResult(intent, Main.REGISTRATION_REQUEST);
 		}
 	}
 

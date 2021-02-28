@@ -26,14 +26,14 @@ import java.util.regex.Pattern;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 
-	int countOfElement;
+	public int countOfElement;
 
 	public RecyclerAdapter() {}
 	public void setCountOfElement(int countOfElement) {
 		this.countOfElement = countOfElement;
 	}
 	public void add(int add) {countOfElement += add;}
-	private ArrayList<Bean> dataLink = Main.data;
+	public ArrayList<Bean> dataLink = Main.data;
 
 	@NonNull
 	@Override
@@ -142,5 +142,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 
 	public void showSorted(ArrayList<Bean> arrayList) {
 		dataLink = arrayList;
+		countOfElement = arrayList.size();
+		System.out.println("-----------"+Main.data.size());
+		System.out.println("----------+"+countOfElement);
 	}
 }
