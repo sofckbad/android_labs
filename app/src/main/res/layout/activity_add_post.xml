@@ -54,7 +54,8 @@
             android:insetLeft="0dp"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:hint="press to set coordinates"
-            app:drawableLeftCompat="@drawable/location_4" />
+            app:drawableLeftCompat="@drawable/location_4"
+            android:visibility="gone" />
 
     <TextView
             android:layout_width="match_parent"

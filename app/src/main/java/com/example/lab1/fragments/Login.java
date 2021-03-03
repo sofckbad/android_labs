@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import com.example.lab1.DBHelper;
 import com.example.lab1.R;
@@ -23,7 +22,7 @@ public class Login extends Fragment {
 		return inflater.inflate(R.layout.fragment_login, container, false);
 	}
 
-	public void signIn(Toast mainToast) {
+	public void signIn() {
 
 		String email = ((EditText) getActivity().findViewById(R.id.login_email)).getText().toString();
 		String password = ((EditText) getActivity().findViewById(R.id.login_password)).getText().toString();
@@ -31,14 +30,14 @@ public class Login extends Fragment {
 		Cursor userCursor;
 
 		if (email.length() == 0) {
-			mainToast.setText("Enter email");
-			if (mainToast.getView().getWindowVisibility() != View.VISIBLE)
-				mainToast.show();
+			Main.activity.mainToast.setText("Enter email");
+			if (Main.activity.mainToast.getView().getWindowVisibility() != View.VISIBLE)
+				Main.activity.mainToast.show();
 		}
 		else if (password.length() == 0){
-			mainToast.setText("Enter password");
-			if (mainToast.getView().getWindowVisibility() != View.VISIBLE)
-				mainToast.show();
+			Main.activity.mainToast.setText("Enter password");
+			if (Main.activity.mainToast.getView().getWindowVisibility() != View.VISIBLE)
+				Main.activity.mainToast.show();
 		}
 		else {
 			String s = "select "+DBHelper.COLUMN_ID+", "+DBHelper.COLUMN_NAME+" from " + DBHelper.USERS + " where " + DBHelper.COLUMN_NAME + " = '" + email + "' and " + DBHelper.COLUMN_PASSWORD + " = '" + password + "'";
@@ -53,9 +52,9 @@ public class Login extends Fragment {
 				Main.idCurrentUser = userCursor.getInt(0);
 				Main.activity.switchFragment(R.id.main_content, ((Main) getActivity()).recyclerFragment);
 			} else {
-				mainToast.setText("User is not registered");
-				if (mainToast.getView().getWindowVisibility() != View.VISIBLE)
-					mainToast.show();
+				Main.activity.mainToast.setText("User is not registered");
+				if (Main.activity.mainToast.getView().getWindowVisibility() != View.VISIBLE)
+					Main.activity.mainToast.show();
 			}
 
 			db.close();

@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.lab1.LoadFromVK;
 import com.example.lab1.R;
 import com.example.lab1.RecyclerAdapter;
 import com.example.lab1.activities.Main;
@@ -25,7 +26,7 @@ import com.google.firebase.database.IgnoreExtraProperties;
 public class RecyclerFragment extends Fragment {
 
 	public RecyclerAdapter recyclerAdapter;
-	RecyclerView recyclerView;
+	public RecyclerView recyclerView;
 	public static int backButton = 0;
 
 	@Override
@@ -68,7 +69,29 @@ public class RecyclerFragment extends Fragment {
 		};
 		requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
 
+		initRecyclerAdapter();
 
+		recyclerAdapter.setCountOfElement(recyclerAdapter.dataLink.size());
+
+		getActivity().findViewById(R.id.sortButton).setOnClickListener(v -> {
+			Intent intent = new Intent(getContext(), SortActivity.class);
+			getActivity().startActivityForResult(intent, Main.SORT_REQUEST);
+		});
+		getActivity().findViewById(R.id.refresh).setOnClickListener(v -> {
+			if (Main.VK_TOKEN == null) {
+				Main.activity.vkAuthorise(null);
+			} else {
+				LoadFromVK asyncTask = new LoadFromVK();
+				asyncTask.execute();
+			}
+		});
+
+		Main.dataLoader.fromDB();
+		recyclerAdapter.setCountOfElement(recyclerAdapter.dataLink.size());
+		recyclerAdapter.notifyDataSetChanged();
+	}
+
+	public void initRecyclerAdapter() {
 		recyclerView = getActivity().findViewById(R.id.recycler);
 		recyclerView.setLayoutManager(new LinearLayoutManager(null, LinearLayoutManager.VERTICAL,
 				false));
@@ -90,16 +113,5 @@ public class RecyclerFragment extends Fragment {
 			}
 		});
 		itemTouchHelper.attachToRecyclerView(recyclerView);
-
-		recyclerAdapter.setCountOfElement(recyclerAdapter.dataLink.size());
-
-		getActivity().findViewById(R.id.sortButton).setOnClickListener(v -> {
-			Intent intent = new Intent(getContext(), SortActivity.class);
-			getActivity().startActivityForResult(intent, Main.SORT_REQUEST);
-		});
-
-		Main.dataLoader.fromDB();
-		recyclerAdapter.setCountOfElement(recyclerAdapter.dataLink.size());
-		recyclerAdapter.notifyDataSetChanged();
 	}
 }

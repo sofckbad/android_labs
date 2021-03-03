@@ -15,18 +15,17 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.lab1.Bean;
 import com.example.lab1.DBHelper;
 import com.example.lab1.InDataBase;
+import com.example.lab1.LoadFromVK;
 import com.example.lab1.fragments.Login;
 import com.example.lab1.R;
 import com.example.lab1.fragments.RecyclerFragment;
 import com.example.lab1.fragments.Register;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
@@ -38,18 +37,13 @@ import com.vk.api.sdk.auth.VKScope;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-
-/*TODO
-* vk requests;
-* firebase;
-* */
 
 public class Main extends AppCompatActivity {
 
 	public static Application application;
 	public static Main activity;
+
+	public static String VK_TOKEN = null;
 
 	public static final int GOOGLE_REQUEST = 281;
 	public static final int VK_REQUEST = 282;
@@ -132,7 +126,16 @@ public class Main extends AppCompatActivity {
 			case VK_REQUEST:
 				VK.onActivityResult(requestCode, resultCode, data, new VKAuthCallback() {
 					@Override
-					public void onLogin(@NotNull VKAccessToken vkAccessToken) { switchFragment(R.id.main_content, recyclerFragment); }
+					public void onLogin(@NotNull VKAccessToken vkAccessToken) {
+						VK_TOKEN = vkAccessToken.getAccessToken();
+						curName = vkAccessToken.getEmail();
+//						Intent intent = new Intent(this, InsertIntoDB.class);
+						switchFragment(R.id.main_content, recyclerFragment);
+						if (recyclerFragment.recyclerView != null) {
+							LoadFromVK asyncTask = new LoadFromVK();
+							asyncTask.execute();
+						}
+					}
 
 					@Override
 					public void onLoginFailed(int i) {
@@ -144,7 +147,7 @@ public class Main extends AppCompatActivity {
 				break;
 			case GOOGLE_REQUEST:
 				try {
-					GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException.class);
+					GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException.class);
 					switchFragment(R.id.main_content, recyclerFragment);
 				} catch (ApiException e) {
 					mainToast.setText("didn't pass google authorization");
@@ -210,10 +213,8 @@ public class Main extends AppCompatActivity {
 
 						String name = data.getStringExtra("name");
 						ArrayList<Bean> list = new ArrayList<>();
-						int i = 0;
 						for (Bean bean: Main.data) {
 							if (bean.name.equals(name) || name.equals("all")) list.add(bean);
-							i++;
 						}
 						recyclerFragment.recyclerAdapter.showSorted(list);
 					}
@@ -238,14 +239,20 @@ public class Main extends AppCompatActivity {
 	}
 
 	public void login_sign_in_click(View view) {
-		login.signIn(mainToast);
+		login.signIn();
 	}
 
 	public void login_sign_up_click(View view) {
 		login.signUp();
 	}
 
-	public void vkAuthorise(View view) { VK.login(this, Collections.singleton(VKScope.EMAIL)); }
+	public void vkAuthorise(View view) {
+		ArrayList<VKScope> arrayList = new ArrayList<>();
+		arrayList.add(VKScope.FRIENDS);
+		arrayList.add(VKScope.WALL);
+		arrayList.add(VKScope.EMAIL);
+		VK.login(this, arrayList);
+	}
 
 	public void googleAuthorise(View view) { startActivityForResult(mGoogleSignInClient.getSignInIntent(), GOOGLE_REQUEST); }
 

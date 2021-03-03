@@ -68,37 +68,5 @@ public class RecyclerHolder extends RecyclerView.ViewHolder {
 		image_content.setLayoutParams(new ConstraintLayout.LayoutParams(
 				ConstraintLayout.LayoutParams.MATCH_PARENT,
 				(int) Main.application.getResources().getDimension(R.dimen.height)));
-		fullPostButton.setOnClickListener(v -> {
-			if (isHidden){
-				image_content.setLayoutParams( new ConstraintLayout.LayoutParams(
-						ConstraintLayout.LayoutParams.MATCH_PARENT,
-						(int) Main.application.getResources().getDimension(R.dimen.height_open_post_image)));
-				text_content.setMaxLines(50);
-				header_content.setMaxLines(50);
-				text_content.setVerticalScrollBarEnabled(true);
-				header_content.setVerticalScrollBarEnabled(true);
-				((Button)v).setText("hide post");
-				playButton.setVisibility(View.VISIBLE);
-//				seekBar.setVisibility(View.VISIBLE);
-				address_content.setVisibility(View.VISIBLE);
-				isHidden = false;
-				RecyclerFragment.backButton = 1;
-			}
-			else {
-				image_content.setLayoutParams( new ConstraintLayout.LayoutParams(
-						ConstraintLayout.LayoutParams.MATCH_PARENT,
-						(int) Main.application.getResources().getDimension(R.dimen.height)));
-				text_content.setVerticalScrollBarEnabled(false);
-				text_content.setMaxLines(3);
-				header_content.setVerticalScrollBarEnabled(false);
-				header_content.setMaxLines(3);
-				((Button)v).setText("show full post");
-				playButton.setVisibility(View.GONE);
-//				seekBar.setVisibility(View.GONE);
-				address_content.setVisibility(View.GONE);
-				isHidden = true;
-				RecyclerFragment.backButton = 0;
-			}
-		});
 	}
 }
