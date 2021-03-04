@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.lab1.LoadFromVK;
 import com.example.lab1.R;
 import com.example.lab1.RecyclerAdapter;
+import com.example.lab1.RecyclerHolder;
 import com.example.lab1.activities.Main;
 import com.example.lab1.activities.SortActivity;
 import com.google.firebase.database.IgnoreExtraProperties;
@@ -109,7 +110,7 @@ public class RecyclerFragment extends Fragment {
 
 			@Override
 			public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-				Main.dataLoader.removeItemAt(viewHolder.getAdapterPosition());
+				Main.dataLoader.removeItemAt((RecyclerHolder) viewHolder);
 			}
 		});
 		itemTouchHelper.attachToRecyclerView(recyclerView);

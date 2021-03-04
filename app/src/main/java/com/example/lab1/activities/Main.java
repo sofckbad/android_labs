@@ -19,12 +19,14 @@ import android.widget.Toast;
 
 import com.example.lab1.Bean;
 import com.example.lab1.DBHelper;
+import com.example.lab1.FromFile;
 import com.example.lab1.InDataBase;
 import com.example.lab1.LoadFromVK;
 import com.example.lab1.fragments.Login;
 import com.example.lab1.R;
 import com.example.lab1.fragments.RecyclerFragment;
 import com.example.lab1.fragments.Register;
+import com.example.lab1.interfaces.dataInterface;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -64,7 +66,7 @@ public class Main extends AppCompatActivity {
 	public static ArrayList<Bean> data = new ArrayList<>();
 
 	public static MediaPlayer mp = null;
-	public static InDataBase dataLoader = new InDataBase();
+	public static dataInterface dataLoader = new FromFile();
 	public static SeekBar currentSeekBar = null;
 	public static Button currentButton = null;
 	public static int numWhoPlaying = - 1;

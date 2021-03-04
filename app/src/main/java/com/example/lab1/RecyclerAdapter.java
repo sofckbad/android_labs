@@ -60,7 +60,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 		holder.header_content.setVerticalScrollBarEnabled(false);
 		holder.header_content.setMaxLines(3);
 		holder.fullPostButton.setText("show full post");
-		if (data.media != null)
+		if (data.media != null && !data.media.equals(""))
 			holder.playButton.setVisibility(View.GONE);
 		holder.isHidden = true;
 
@@ -114,12 +114,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 				holder.image_content.setLayoutParams( new ConstraintLayout.LayoutParams(
 						ConstraintLayout.LayoutParams.MATCH_PARENT,
 						(int) Main.application.getResources().getDimension(R.dimen.height_open_post_image)));
-				holder.text_content.setMaxLines(50);
-				holder.header_content.setMaxLines(50);
+				holder.text_content.setMaxLines(Integer.MAX_VALUE);
+				holder.header_content.setMaxLines(Integer.MAX_VALUE);
 				holder.text_content.setVerticalScrollBarEnabled(true);
+				holder.text_content.setScrollContainer(true);
 				holder.header_content.setVerticalScrollBarEnabled(true);
 				((Button)v).setText("hide post");
-				if (data.media != null)
+				if (data.media != null && !data.media.equals(""))
 					holder.playButton.setVisibility(View.VISIBLE);
 //				seekBar.setVisibility(View.VISIBLE);
 				holder.isHidden = false;
@@ -131,10 +132,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 						(int) Main.application.getResources().getDimension(R.dimen.height)));
 				holder.text_content.setVerticalScrollBarEnabled(false);
 				holder.text_content.setMaxLines(3);
+				holder.text_content.setScrollContainer(false);
 				holder.header_content.setVerticalScrollBarEnabled(false);
 				holder.header_content.setMaxLines(3);
 				((Button)v).setText("show full post");
-				if (data.media != null)
+				if (data.media != null && !data.media.equals(""))
 					holder.playButton.setVisibility(View.GONE);
 //				seekBar.setVisibility(View.GONE);
 				holder.isHidden = true;
@@ -150,13 +152,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 //					m.find();
 //					int i = Integer.parseInt(m.group());
 //					Main.mp.setDataSource(Main.application, ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, i));
-					if (data.media == null) return;
+					if (data.media == null || data.media.equals("")) return;
 					try {
 						Matcher m = Pattern.compile("\\d*$").matcher(data.media);
 						m.find();
 						int i = Integer.parseInt(m.group());
 						Main.mp.setDataSource(Main.application, ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, i));
-					} catch (NumberFormatException ignore) {
+					} catch (IOException ignore) {
 						ignore.printStackTrace();
 						Main.mp.setDataSource(data.media);
 					}

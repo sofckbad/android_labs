@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.lab1.LoadImageAsync;
 import com.example.lab1.R;
 
 import java.io.IOException;
@@ -50,7 +51,8 @@ public class AddPost extends AppCompatActivity {
 		intent = getIntent();
 
 		if (intent.getStringExtra("old_image") != null) {
-			image.setImageURI(Uri.parse(intent.getStringExtra("old_image")));
+//			image.setImageURI(Uri.parse(intent.getStringExtra("old_image")));
+			new LoadImageAsync(image, -1, intent.getStringExtra("old_image")).execute();
 			music.setText(intent.getStringExtra("old_audio"));
 			text.setText(intent.getStringExtra("old_text"));
 			header.setText(intent.getStringExtra("old_header"));

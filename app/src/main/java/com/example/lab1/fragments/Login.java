@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.Switch;
 
 import com.example.lab1.DBHelper;
+import com.example.lab1.FromFile;
 import com.example.lab1.R;
 import com.example.lab1.activities.Main;
 
@@ -68,6 +69,11 @@ public class Login extends Fragment {
 		Main.activity.findViewById(R.id.base_switcher).setOnClickListener(v -> {
 			Main.activity._isFirebase = ((Switch) v).isChecked();
 		});
+		if (Main.dataLoader.getClass() == FromFile.class) {
+			Main.activity.findViewById(R.id.base_switcher).setVisibility(View.GONE);
+			Main.activity.findViewById(R.id.SQLite).setVisibility(View.GONE);
+			Main.activity.findViewById(R.id.Firebase).setVisibility(View.GONE);
+		}
 	}
 
 	public void signUp() {

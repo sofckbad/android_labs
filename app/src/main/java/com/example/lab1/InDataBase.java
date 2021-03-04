@@ -74,7 +74,8 @@ public class InDataBase implements dataInterface {
 		}
 	}
 
-	private void fromVK() {
+	@Override
+	public void fromVK() {
 		if (Main.data.size() == 0) {
 			if (Main.VK_TOKEN == null) {
 				Main.activity.vkAuthorise(null);
@@ -126,13 +127,13 @@ public class InDataBase implements dataInterface {
 	}
 
 	@Override
-	public void removeItemAt(int adapterPosition) {
+	public void removeItemAt(RecyclerHolder holder) {
 		if (! Main._isFirebase) {
 			SQLiteDatabase db = (new DBHelper(Main.application)).getWritableDatabase();
-			db.execSQL("DELETE FROM " + DBHelper.DATA + " WHERE " + DBHelper.COLUMN_HEADER + " = ? AND " + DBHelper.COLUMN_IMAGE + " = ? AND " + DBHelper.COLUMN_TEXT + " = ?", new Object[] { Main.data.get(adapterPosition).header, Main.data.get(adapterPosition).image, Main.data.get(adapterPosition).text });
+			db.execSQL("DELETE FROM " + DBHelper.DATA + " WHERE " + DBHelper.COLUMN_HEADER + " = ? AND " + DBHelper.COLUMN_IMAGE + " = ? AND " + DBHelper.COLUMN_TEXT + " = ?", new Object[] { Main.data.get(holder.getAdapterPosition()).header, Main.data.get(holder.getAdapterPosition()).image, Main.data.get(holder.getAdapterPosition()).text });
 			db.close();
 		} else {
-			FirebaseDatabase.getInstance().getReference("items").child(Main.data.get(adapterPosition).link).removeValue();
+			FirebaseDatabase.getInstance().getReference("items").child(Main.data.get(holder.getAdapterPosition()).link).removeValue();
 		}
 
 		Main.activity.mainToast.setText("Удалено");
@@ -140,15 +141,15 @@ public class InDataBase implements dataInterface {
 			Main.activity.mainToast.show();
 		}
 
-		Main.activity.recyclerFragment.recyclerAdapter.notifyItemRangeRemoved(adapterPosition, 1);
+		Main.activity.recyclerFragment.recyclerAdapter.notifyItemRangeRemoved(holder.getAdapterPosition(), 1);
 
 		Main.activity.recyclerFragment.recyclerAdapter.countOfElement--;
-		if (Main.numWhoPlaying == adapterPosition) {
+		if (Main.numWhoPlaying == holder.getAdapterPosition()) {
 			Main.mp.reset();
 			Main.numWhoPlaying = - 1;
 		}
 
-		Main.data.remove(adapterPosition);
+		Main.data.remove(holder.getAdapterPosition());
 
 	}
 

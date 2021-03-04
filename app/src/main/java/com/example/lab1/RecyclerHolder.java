@@ -3,6 +3,7 @@ package com.example.lab1;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -14,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.lab1.activities.CryptoActivity;
 import com.example.lab1.activities.Main;
 import com.example.lab1.fragments.RecyclerFragment;
 
@@ -68,5 +70,11 @@ public class RecyclerHolder extends RecyclerView.ViewHolder {
 		image_content.setLayoutParams(new ConstraintLayout.LayoutParams(
 				ConstraintLayout.LayoutParams.MATCH_PARENT,
 				(int) Main.application.getResources().getDimension(R.dimen.height)));
+		text_content.setOnLongClickListener(v -> {
+			Intent intent = new Intent(Main.activity, CryptoActivity.class);
+			intent.putExtra("text", ((TextView) v).getText());
+			Main.activity.startActivity(intent);
+			return true;
+		});
 	}
 }

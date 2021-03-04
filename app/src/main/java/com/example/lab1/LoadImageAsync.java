@@ -11,7 +11,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.regex.Pattern;
 
-public class LoadImageAsync extends AsyncTask<Void, Void, Bitmap> {
+public class LoadImageAsync extends AsyncTask<Void, Bitmap, Bitmap> {
 
 	private ImageView imageView;
 	int position;
@@ -29,22 +29,30 @@ public class LoadImageAsync extends AsyncTask<Void, Void, Bitmap> {
 		try {
 			if (uri == null) return null;
 			if (! Pattern.compile("^http").matcher(uri).find()) return null;
-			java.net.URL url = new java.net.URL(uri);
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-			connection.setDoInput(true);
-			connection.connect();
-			InputStream input = connection.getInputStream();
-			img = BitmapFactory.decodeStream(input);
+			for (String u: uri.split("\\|")) {
+				java.net.URL url = new java.net.URL(u);
+				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+				connection.setDoInput(true);
+				connection.connect();
+				InputStream input = connection.getInputStream();
+				img = BitmapFactory.decodeStream(input);
+				publishProgress(img);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return img;
+		uri = null;
+		return null;
+	}
+
+	@Override
+	protected void onProgressUpdate(Bitmap... bitmap) {
+		imageView.setImageBitmap(bitmap[0]);
 	}
 
 	@Override
 	protected void onPostExecute(Bitmap bitmap) {
 		if (uri == null) return;
 		if (bitmap == null) imageView.setImageURI(Uri.parse(uri));
-		else imageView.setImageBitmap(bitmap);
 	}
 }
