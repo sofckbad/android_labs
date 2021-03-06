@@ -57,28 +57,32 @@ public class LoadFromVK extends AsyncTask<Void, Void, JSONObject> {
 			for (int i = 0; i < items.length(); i++) {
 				JSONObject obj = items.getJSONObject(i);
 				String image = "";
-				String audio = null;
+				String audio = "";
 				String text = obj.getString("text");
-				if (text.equals("")) text = "пост без текста";
-				JSONArray attachments = obj.getJSONArray("attachments");
-				boolean aud = true;
-				boolean img = true;
-				for (int j = 0; j < attachments.length(); j++) {
-					if (attachments.getJSONObject(j).getString("type").equals("photo") && img) {
-						JSONArray sizes = attachments.getJSONObject(j).getJSONObject("photo").getJSONArray("sizes");
-						for (int k = 0, buff = 0; k < sizes.length(); k++) {
-							if (buff <= sizes.getJSONObject(k).getInt("height"))
-								image += sizes.getJSONObject(k).getString("url")+"|";
-							buff = sizes.getJSONObject(k).getInt("height");
+				try {
+					JSONArray attachments = obj.getJSONArray("attachments");
+					boolean aud = true;
+					boolean img = true;
+					for (int j = 0; j < attachments.length(); j++) {
+						if (attachments.getJSONObject(j).getString("type").equals("photo") && img) {
+							JSONArray sizes = attachments.getJSONObject(j).getJSONObject("photo").getJSONArray("sizes");
+							for (int k = 0, buff = 0; k < sizes.length(); k++) {
+								if (buff <= sizes.getJSONObject(k).getInt("height"))
+									image += sizes.getJSONObject(k).getString("url")+"|";
+								buff = sizes.getJSONObject(k).getInt("height");
+							}
+							image = image.substring(0, image.length()-1);
+							img = false;
 						}
-						image = image.substring(0, image.length()-1);
-						img = false;
+						else if (attachments.getJSONObject(j).getString("type").equals("audio") && aud) {
+							audio = attachments.getJSONObject(j).getJSONObject("audio").getString("url");
+							aud = false;
+						}
 					}
-					else if (attachments.getJSONObject(j).getString("type").equals("audio") && aud) {
-						audio = attachments.getJSONObject(j).getJSONObject("audio").getString("url");
-						aud = false;
-					}
+				} catch (JSONException e) {
+					e.printStackTrace();
 				}
+				if (text.equals("")) text = "пост без текста\nтут просто полу-рандомный текст\nimg src: \n" + image;
 				Main.dataLoader.intoDB("post from vk", image, audio, text, "0,0");
 			}
 			Main.activity.recyclerFragment.recyclerAdapter.notifyDataSetChanged();

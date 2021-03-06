@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Scroller;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -55,14 +56,16 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 		holder.image_content.setLayoutParams( new ConstraintLayout.LayoutParams(
 				ConstraintLayout.LayoutParams.MATCH_PARENT,
 				(int) Main.application.getResources().getDimension(R.dimen.height)));
-		holder.text_content.setVerticalScrollBarEnabled(false);
 		holder.text_content.setMaxLines(3);
-		holder.header_content.setVerticalScrollBarEnabled(false);
 		holder.header_content.setMaxLines(3);
 		holder.fullPostButton.setText("show full post");
 		if (data.media != null && !data.media.equals(""))
 			holder.playButton.setVisibility(View.GONE);
 		holder.isHidden = true;
+		Scroller scroller = new Scroller(Main.activity);
+		scroller.setFinalY(0);
+		scroller.extendDuration(0);
+		holder.text_content.setScroller(scroller);
 
 		RecyclerFragment.backButton = 0;
 		holder.text_content.setText(data.text);
@@ -116,9 +119,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 						(int) Main.application.getResources().getDimension(R.dimen.height_open_post_image)));
 				holder.text_content.setMaxLines(Integer.MAX_VALUE);
 				holder.header_content.setMaxLines(Integer.MAX_VALUE);
-				holder.text_content.setVerticalScrollBarEnabled(true);
-				holder.text_content.setScrollContainer(true);
-				holder.header_content.setVerticalScrollBarEnabled(true);
 				((Button)v).setText("hide post");
 				if (data.media != null && !data.media.equals(""))
 					holder.playButton.setVisibility(View.VISIBLE);
@@ -130,10 +130,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerHolder> {
 				holder.image_content.setLayoutParams( new ConstraintLayout.LayoutParams(
 						ConstraintLayout.LayoutParams.MATCH_PARENT,
 						(int) Main.application.getResources().getDimension(R.dimen.height)));
-				holder.text_content.setVerticalScrollBarEnabled(false);
 				holder.text_content.setMaxLines(3);
-				holder.text_content.setScrollContainer(false);
-				holder.header_content.setVerticalScrollBarEnabled(false);
 				holder.header_content.setMaxLines(3);
 				((Button)v).setText("show full post");
 				if (data.media != null && !data.media.equals(""))

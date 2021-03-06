@@ -169,7 +169,7 @@ public class Main extends AppCompatActivity {
 				break;
 			case REGISTRATION_REQUEST:
 				if (resultCode == RESULT_OK) {
-					switchFragment(R.id.main_content, recyclerFragment);
+					switchFragment(R.id.main_content, login);
 					mainToast.setText("Account was created");
 				} else {
 					mainToast.setText("Email is busy");

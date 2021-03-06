@@ -151,29 +151,28 @@ public class FromFile implements dataInterface {
 				}
 			}
 			position = j;
-			array.remove(position);
 			try {
 				Main.data.remove(position);
+				array.remove(position);
+				fos = Main.activity.openFileOutput("data.json", Context.MODE_PRIVATE);
+				fos.write(Crypt.encrypt(json.toString()).getBytes());
+				
+				Main.activity.mainToast.setText("Удалено");
+				if (Main.activity.mainToast.getView().getWindowVisibility() != View.VISIBLE) {
+					Main.activity.mainToast.show();
+				}
+
+				Main.activity.recyclerFragment.recyclerAdapter.notifyItemRangeRemoved(position, 1);
+				Main.activity.recyclerFragment.recyclerAdapter.countOfElement--;
+				if (Main.numWhoPlaying == position) {
+					Main.mp.reset();
+					Main.numWhoPlaying = - 1;
+				}
 			} catch (ArrayIndexOutOfBoundsException e) {
 				e.printStackTrace();
 			}
-			fos = Main.activity.openFileOutput("data.json", Context.MODE_PRIVATE);
-			fos.write(Crypt.encrypt(json.toString()).getBytes());
 		} catch (IOException | JSONException e) {
 			e.printStackTrace();
-		}
-
-
-		Main.activity.mainToast.setText("Удалено");
-		if (Main.activity.mainToast.getView().getWindowVisibility() != View.VISIBLE) {
-			Main.activity.mainToast.show();
-		}
-
-		Main.activity.recyclerFragment.recyclerAdapter.notifyItemRangeRemoved(position, 1);
-		Main.activity.recyclerFragment.recyclerAdapter.countOfElement--;
-		if (Main.numWhoPlaying == position) {
-			Main.mp.reset();
-			Main.numWhoPlaying = - 1;
 		}
 	}
 
