@@ -20,8 +20,6 @@ import android.widget.Toast;
 import com.example.lab1.Bean;
 import com.example.lab1.DBHelper;
 import com.example.lab1.FromFile;
-import com.example.lab1.InDataBase;
-import com.example.lab1.LoadFromVK;
 import com.example.lab1.fragments.Login;
 import com.example.lab1.R;
 import com.example.lab1.fragments.RecyclerFragment;
@@ -133,10 +131,6 @@ public class Main extends AppCompatActivity {
 						curName = vkAccessToken.getEmail();
 //						Intent intent = new Intent(this, InsertIntoDB.class);
 						switchFragment(R.id.main_content, recyclerFragment);
-						if (recyclerFragment.recyclerView != null) {
-							LoadFromVK asyncTask = new LoadFromVK();
-							asyncTask.execute();
-						}
 					}
 
 					@Override

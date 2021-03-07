@@ -21,7 +21,7 @@
                 android:orientation="vertical">
 
             <TextView
-                    android:text="Default"
+                    android:text="Текст"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/textView11"
@@ -40,7 +40,7 @@
                     tools:text="default text" />
 
             <TextView
-                    android:text="encrypted"
+                    android:text="Зашифрованное (библиотека)"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/textView5"
@@ -59,7 +59,7 @@
                     tools:text="encrypt" />
 
             <TextView
-                    android:text="decrypted"
+                    android:text="Расшифрованное (библиотека)"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/textView7"
@@ -72,6 +72,82 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/decrypted_type0"
+                    android:fontFamily="monospace"
+                    android:textColor="@color/hint"
+                    android:textSize="18sp"
+                    tools:text="decrypt" />
+
+            <TextView
+                    android:text="Зашифрованное (Виженер)"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView6"
+                    android:fontFamily="monospace"
+                    android:textColor="@color/white"
+                    android:textSize="22sp"
+                    android:gravity="center" />
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/encrypted_type1"
+                    android:fontFamily="monospace"
+                    android:textColor="@color/hint"
+                    android:textSize="18sp"
+                    tools:text="encrypt" />
+
+            <TextView
+                    android:text="Расшифрованное (Виженер)"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView8"
+                    android:fontFamily="monospace"
+                    android:textColor="@color/white"
+                    android:textSize="22sp"
+                    android:gravity="center" />
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/decrypted_type1"
+                    android:fontFamily="monospace"
+                    android:textColor="@color/hint"
+                    android:textSize="18sp"
+                    tools:text="decrypt" />
+
+            <TextView
+                    android:text="Зашифрованное (Хаффман)"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView9"
+                    android:fontFamily="monospace"
+                    android:textColor="@color/white"
+                    android:textSize="22sp"
+                    android:gravity="center" />
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/encrypted_type2"
+                    android:fontFamily="monospace"
+                    android:textColor="@color/hint"
+                    android:textSize="18sp"
+                    tools:text="encrypt" />
+
+            <TextView
+                    android:text="Расшифрованное (Хаффман)"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView10"
+                    android:fontFamily="monospace"
+                    android:textColor="@color/white"
+                    android:textSize="22sp"
+                    android:gravity="center" />
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/decrypted_type2"
                     android:fontFamily="monospace"
                     android:textColor="@color/hint"
                     android:textSize="18sp"

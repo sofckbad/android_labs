@@ -14,6 +14,10 @@ public class CryptoActivity extends AppCompatActivity {
 	TextView defaultText;
 	TextView encrypted_type0;
 	TextView decrypted_type0;
+	TextView encrypted_type1;
+	TextView decrypted_type1;
+	TextView encrypted_type2;
+	TextView decrypted_type2;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +27,10 @@ public class CryptoActivity extends AppCompatActivity {
 		defaultText = findViewById(R.id.default_text);
 		encrypted_type0 = findViewById(R.id.encrypted_type0);
 		decrypted_type0 = findViewById(R.id.decrypted_type0);
+		encrypted_type1 = findViewById(R.id.encrypted_type1);
+		decrypted_type1 = findViewById(R.id.decrypted_type1);
+		encrypted_type2 = findViewById(R.id.encrypted_type2);
+		decrypted_type2 = findViewById(R.id.decrypted_type2);
 
 		defaultText.setText(getIntent().getStringExtra("text"));
 
@@ -32,10 +40,16 @@ public class CryptoActivity extends AppCompatActivity {
 		int i = 0;
 		@Override
 		protected Void doInBackground(String... strings) {
-			String s = Crypt.encrypt(strings[0]);
+			String s;
+			s = Crypt.encryptLib(strings[0]);
 			publishProgress(s);
-			s = Crypt.decrypt(s);
+			publishProgress(Crypt.decryptLib(s));
+			s = Crypt.encryptVigenere(strings[0]);
 			publishProgress(s);
+			publishProgress(Crypt.decryptVigenere(s));
+			s = Crypt.encryptHuffman(strings[0]);
+			publishProgress(s);
+			publishProgress(Crypt.decryptHuffman(s));
 			return null;
 		}
 		@Override
@@ -46,6 +60,18 @@ public class CryptoActivity extends AppCompatActivity {
 					break;
 				case 1:
 					decrypted_type0.setText(values[0]);
+					break;
+				case 2:
+					encrypted_type1.setText(values[0]);
+					break;
+				case 3:
+					decrypted_type1.setText(values[0]);
+					break;
+				case 4:
+					encrypted_type2.setText(values[0]);
+					break;
+				case 5:
+					decrypted_type2.setText(values[0]);
 					break;
 			}
 			i++;

@@ -16,13 +16,11 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.lab1.LoadFromVK;
 import com.example.lab1.R;
 import com.example.lab1.RecyclerAdapter;
 import com.example.lab1.RecyclerHolder;
 import com.example.lab1.activities.Main;
 import com.example.lab1.activities.SortActivity;
-import com.google.firebase.database.IgnoreExtraProperties;
 
 public class RecyclerFragment extends Fragment {
 
@@ -77,14 +75,6 @@ public class RecyclerFragment extends Fragment {
 		getActivity().findViewById(R.id.sortButton).setOnClickListener(v -> {
 			Intent intent = new Intent(getContext(), SortActivity.class);
 			getActivity().startActivityForResult(intent, Main.SORT_REQUEST);
-		});
-		getActivity().findViewById(R.id.refresh).setOnClickListener(v -> {
-			if (Main.VK_TOKEN == null) {
-				Main.activity.vkAuthorise(null);
-			} else {
-				LoadFromVK asyncTask = new LoadFromVK();
-				asyncTask.execute();
-			}
 		});
 
 		Main.dataLoader.fromDB();

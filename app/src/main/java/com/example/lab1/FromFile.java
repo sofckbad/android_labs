@@ -23,18 +23,6 @@ public class FromFile implements dataInterface {
 	JSONObject json;
 
 	@Override
-	public void fromVK() {
-		if (Main.data.size() == 0) {
-			if (Main.VK_TOKEN == null) {
-				Main.activity.vkAuthorise(null);
-			} else {
-				LoadFromVK asyncTask = new LoadFromVK();
-				asyncTask.execute();
-			}
-		}
-	}
-
-	@Override
 	public void intoDB(String header, String image, String audio, String text, String coordinates) {
 		JSONArray data;
 		try {
@@ -109,7 +97,6 @@ public class FromFile implements dataInterface {
 						curObj.getString("date")
 						));
 			}
-			fromVK();
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
