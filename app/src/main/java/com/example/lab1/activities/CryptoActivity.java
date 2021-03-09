@@ -37,44 +37,42 @@ public class CryptoActivity extends AppCompatActivity {
 		new myAsync().execute(getIntent().getStringExtra("text"));
 	}
 	private class myAsync extends AsyncTask<String, String, Void> {
-		int i = 0;
 		@Override
 		protected Void doInBackground(String... strings) {
 			String s;
 			s = Crypt.encryptLib(strings[0]);
-			publishProgress(s);
-			publishProgress(Crypt.decryptLib(s));
+			publishProgress(s, "0");
+			publishProgress(Crypt.decryptLib(s), "1");
 			s = Crypt.encryptVigenere(strings[0]);
-			publishProgress(s);
-			publishProgress(Crypt.decryptVigenere(s));
+			publishProgress(s, "2");
+			publishProgress(Crypt.decryptVigenere(s), "3");
 			s = Crypt.encryptHuffman(strings[0]);
-			publishProgress(s);
-			publishProgress(Crypt.decryptHuffman(s));
+			publishProgress(s, "4");
+			publishProgress(Crypt.decryptHuffman(s), "5");
 			return null;
 		}
 		@Override
 		protected void onProgressUpdate(String... values) {
-			switch (i) {
-				case 0:
+			switch (values[1]) {
+				case "0":
 					encrypted_type0.setText(values[0]);
 					break;
-				case 1:
+				case "1":
 					decrypted_type0.setText(values[0]);
 					break;
-				case 2:
+				case "2":
 					encrypted_type1.setText(values[0]);
 					break;
-				case 3:
+				case "3":
 					decrypted_type1.setText(values[0]);
 					break;
-				case 4:
+				case "4":
 					encrypted_type2.setText(values[0]);
 					break;
-				case 5:
+				case "5":
 					decrypted_type2.setText(values[0]);
 					break;
 			}
-			i++;
 		}
 	}
 }

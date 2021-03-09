@@ -11,7 +11,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -81,9 +80,7 @@ public class FromFile implements dataInterface {
 
 			if (Main.data.size() != 0) { Main.data.clear();}
 
-			Main.activity.mainToast.setText("Подгружаем из json");
-			if (Main.activity.mainToast.getView().getWindowVisibility() != View.VISIBLE)
-				Main.activity.mainToast.show();
+
 
 			for (int i = 0; i < data.length(); i++) {
 				JSONObject curObj = data.getJSONObject(i);
@@ -97,25 +94,35 @@ public class FromFile implements dataInterface {
 						curObj.getString("date")
 						));
 			}
+
+			if (Main.data.size() == 0){
+				Main.activity.mainToast.setText("Файл пуст");
+				if (Main.activity.mainToast.getView().getWindowVisibility() != View.VISIBLE)
+					Main.activity.mainToast.show();
+			}
 		} catch (JSONException e) {
 			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+			Main.activity.mainToast.setText("Файл не создан");
+			if (Main.activity.mainToast.getView().getWindowVisibility() != View.VISIBLE)
+				Main.activity.mainToast.show();
+			try {
+				json = new JSONObject("{\"data\":[]}");
+				JSONArray data = json.getJSONArray("data");
+			} catch (JSONException jsonException) {
+				jsonException.printStackTrace();
+			}
 		}
 	}
 
-	private String getFile() {
-		BufferedReader reader;
-		try {
-			FileInputStream fin = Main.activity.openFileInput("data.json");
-
-			byte[] bytes = new byte[fin.available()];
-			fin.read(bytes);
-			String res = new String (bytes);
-			res = Crypt.decrypt(res);
-			return res;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return "{\"data\":[]}";
+	private String getFile() throws IOException {
+		FileInputStream fin = Main.activity.openFileInput("data.json");
+		byte[] bytes = new byte[fin.available()];
+		fin.read(bytes);
+		String res = new String (bytes);
+		res = Crypt.decrypt(res);
+		return res;
 	}
 
 	@Override

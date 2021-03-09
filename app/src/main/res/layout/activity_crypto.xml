@@ -123,7 +123,8 @@
                     android:fontFamily="monospace"
                     android:textColor="@color/white"
                     android:textSize="22sp"
-                    android:gravity="center" />
+                    android:gravity="center"
+                    android:visibility="gone" />
 
             <TextView
                     android:layout_width="match_parent"
@@ -132,7 +133,8 @@
                     android:fontFamily="monospace"
                     android:textColor="@color/hint"
                     android:textSize="18sp"
-                    tools:text="encrypt" />
+                    tools:text="encrypt"
+                    android:visibility="gone" />
 
             <TextView
                     android:text="Расшифрованное (Хаффман)"
@@ -142,7 +144,8 @@
                     android:fontFamily="monospace"
                     android:textColor="@color/white"
                     android:textSize="22sp"
-                    android:gravity="center" />
+                    android:gravity="center"
+                    android:visibility="gone" />
 
             <TextView
                     android:layout_width="match_parent"
@@ -151,7 +154,8 @@
                     android:fontFamily="monospace"
                     android:textColor="@color/hint"
                     android:textSize="18sp"
-                    tools:text="decrypt" />
+                    tools:text="decrypt"
+                    android:visibility="gone" />
         </LinearLayout>
     </ScrollView>
 
